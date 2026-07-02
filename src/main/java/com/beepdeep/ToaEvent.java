@@ -17,8 +17,6 @@ enum ToaEvent
 {
 	CRONDIS_ENTER("crondisEnter", "Enter Path of Crondis"),
 	CRONDIS_LEAVE("crondisLeave", "Leave Path of Crondis"),
-	CROC_DEATH("crocDeath", "Crocodile defeated"),
-	CROC_ATTACK("crocAttack", "Crocodile attack"),
 	HET_ONE_PHASE_FAIL("hetOnePhaseFail", "Het seal not one-phased"),
 	VAULT_NO_RARE_LOOT("vaultNoRareLoot", "Vault opened with no rare loot"),
 	VAULT_RARE_LOOT("vaultRareLoot", "Vault opened with rare loot"),

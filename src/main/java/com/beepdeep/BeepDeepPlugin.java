@@ -6,14 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.ActorDeath;
-import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.events.NpcSpawned;
-import net.runelite.api.events.WidgetLoaded;
-import net.runelite.api.gameval.InterfaceID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -28,8 +23,6 @@ import net.runelite.client.plugins.PluginDescriptor;
 public class BeepDeepPlugin extends Plugin
 {
 	private static final int CRONDIS_PUZZLE_REGION = 15698;
-	private static final int CRONDIS_RED_CROCODILE = 11705;
-	private static final int CRONDIS_RED_CROCODILE_ATTACK = 9804;
     private static final int TOA_VAULT_REGION = 14672;
 	private static final int VARBIT_ID_SARCOPHAGUS = 14373;
 
@@ -158,49 +151,6 @@ public class BeepDeepPlugin extends Plugin
     private ToaEvent determineVaultLootEvent(int varbitValue)
     {
         return (varbitValue & 1) != 0 ? ToaEvent.VAULT_RARE_LOOT : ToaEvent.VAULT_NO_RARE_LOOT;
-    }
-
-    // Red Crocodile Death Event
-	@Subscribe
-	public void onActorDeath(ActorDeath event)
-	{
-		Actor actor = event.getActor();
-		if (notInInstance() || !(actor instanceof NPC))
-		{
-			return;
-		}
-
-		if (isRedCrocodile((NPC) actor))
-		{
-			soundManager.trigger(ToaEvent.CROC_DEATH);
-		}
-	}
-
-    // Red Crocodile Attack Event
-	@Subscribe
-	public void onAnimationChanged(AnimationChanged event)
-	{
-		Actor actor = event.getActor();
-		if (notInInstance() || !(actor instanceof NPC))
-		{
-			return;
-		}
-
-		NPC npc = (NPC) actor;
-        if (isRedCrocodileAttacking(npc)){
-            soundManager.trigger(ToaEvent.CROC_ATTACK);
-        }
-	}
-
-    private boolean isRedCrocodile(NPC npc)
-    {
-        return npc.getId() == CRONDIS_RED_CROCODILE;
-    }
-
-    private boolean isRedCrocodileAttacking(NPC npc)
-    {
-        int animationId = npc.getAnimation();
-        return isRedCrocodile(npc) && animationId == CRONDIS_RED_CROCODILE_ATTACK;
     }
 
 	public void onChatMessage(ChatMessage event)
