@@ -12,7 +12,6 @@ every sound slot has its own volume (0–100%).
 - Leave Path of Crondis
 - Crocodile defeated
 - Crocodile attack
-- Scabaras puzzle failed
 - Het seal not one-phased
 - Apmeken issue not fixed
 - Vault opens with no rare loot
