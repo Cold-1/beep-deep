@@ -9,8 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
@@ -149,18 +147,15 @@ class SoundManager
 		{
 			audioPlayer.play(file, gainForVolume(volume));
 		}
-		catch (UnsupportedAudioFileException e)
-		{
-			log.warn("Beep Deep: unsupported audio format for {} (only WAV/AU/AIFF are supported): {}", file, e.getMessage());
-		}
+
 		catch (IOException e)
 		{
 			log.warn("Beep Deep: could not read sound file {}: {}", file, e.getMessage());
 		}
-		catch (LineUnavailableException e)
-		{
-			log.warn("Beep Deep: audio line unavailable for {}: {}", file, e.getMessage());
-		}
+        catch (Exception e)
+        {
+            log.warn("Beep Deep: Unable to play audio file {} error: {}", file, e.getMessage());
+        }
 	}
 
 	/**
