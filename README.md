@@ -10,7 +10,6 @@ every sound slot has its own volume (0–100%).
 
 - Enter Path of Crondis
 - Leave Path of Crondis
-- Crocodile spawns
 - Crocodile defeated
 - Crocodile attack
 - Scabaras puzzle failed

@@ -17,7 +17,6 @@ enum ToaEvent
 {
 	CRONDIS_ENTER("crondisEnter", "Enter Path of Crondis"),
 	CRONDIS_LEAVE("crondisLeave", "Leave Path of Crondis"),
-	CROC_SPAWN("crocSpawn", "Crocodile spawns"),
 	CROC_DEATH("crocDeath", "Crocodile defeated"),
 	CROC_ATTACK("crocAttack", "Crocodile attack"),
 	HET_ONE_PHASE_FAIL("hetOnePhaseFail", "Het seal not one-phased"),

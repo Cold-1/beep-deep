@@ -157,70 +157,12 @@ public interface BeepDeepConfig extends Config
 		return 50;
 	}
 
-	// ===================== Path of Crondis: Crocodile Spawns =====================
-
-	@ConfigSection(
-		name = "Path of Crondis - Crocodile Spawns",
-		description = "Sounds played when a crocodile spawns in the Path of Crondis.",
-		position = 3,
-		closedByDefault = true
-	)
-	String crocSpawnSection = "crocSpawnSection";
-
-	@ConfigItem(keyName = "crocSpawnEnabled", name = "Enabled", description = "Play a sound for this event.", section = crocSpawnSection, position = 0)
-	default boolean crocSpawnEnabled()
-	{
-		return true;
-	}
-
-	@ConfigItem(keyName = "crocSpawnSound1", name = "Sound 1", description = SOUND_DESC, section = crocSpawnSection, position = 1)
-	default String crocSpawnSound1()
-	{
-		return "2192";
-	}
-
-	@Range(min = 0, max = 100)
-	@Units(Units.PERCENT)
-	@ConfigItem(keyName = "crocSpawnVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = crocSpawnSection, position = 2)
-	default int crocSpawnVolume1()
-	{
-		return 50;
-	}
-
-	@ConfigItem(keyName = "crocSpawnSound2", name = "Sound 2", description = SOUND_DESC, section = crocSpawnSection, position = 3)
-	default String crocSpawnSound2()
-	{
-		return "";
-	}
-
-	@Range(min = 0, max = 100)
-	@Units(Units.PERCENT)
-	@ConfigItem(keyName = "crocSpawnVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = crocSpawnSection, position = 4)
-	default int crocSpawnVolume2()
-	{
-		return 50;
-	}
-
-	@ConfigItem(keyName = "crocSpawnSound3", name = "Sound 3", description = SOUND_DESC, section = crocSpawnSection, position = 5)
-	default String crocSpawnSound3()
-	{
-		return "";
-	}
-
-	@Range(min = 0, max = 100)
-	@Units(Units.PERCENT)
-	@ConfigItem(keyName = "crocSpawnVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = crocSpawnSection, position = 6)
-	default int crocSpawnVolume3()
-	{
-		return 50;
-	}
-
 	// ===================== Path of Crondis: Crocodile Defeated =====================
 
 	@ConfigSection(
 		name = "Path of Crondis - Crocodile Defeated",
 		description = "Sounds played when a crocodile is defeated in the Path of Crondis.",
-		position = 4,
+		position = 3,
 		closedByDefault = true
 	)
 	String crocDeathSection = "crocDeathSection";
@@ -278,7 +220,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Crondis - Crocodile Attack",
 		description = "Sounds played when a crocodile attacks.",
-		position = 5,
+		position = 4,
 		closedByDefault = true
 	)
 	String crocAttackSection = "crocAttackSection";
