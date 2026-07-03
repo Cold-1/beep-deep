@@ -10,8 +10,6 @@ every sound slot has its own volume (0–100%).
 
 - Enter Path of Crondis
 - Leave Path of Crondis
-- Crocodile defeated
-- Crocodile attack
 - Het seal not one-phased
 - Apmeken issue not fixed
 - Vault opens with no rare loot
@@ -23,8 +21,8 @@ These events are supported by the plugin and can each play a configured sound wh
 
 For each sound slot you can provide either:
 
-- a **local file path** (e.g. `C:\sounds\croc.wav`)
-- a **URL** (e.g. `https://example.com/croc.wav`), only used when *Allow remote URLs* is enabled
+- a **local file path** (e.g. `C:\sounds\beep.wav`)
+- a **URL** (e.g. `https://example.com/beep.wav`), only used when *Allow remote URLs* is enabled
 - a RuneScape **sound ID** (e.g. `123`), see [List of sound IDs](https://oldschool.runescape.wiki/w/List_of_sound_IDs).
 
 Leave a slot blank to disable it.
