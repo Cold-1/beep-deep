@@ -1,20 +1,33 @@
 package com.beepdeep;
 
 import com.google.inject.Provides;
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
+import net.runelite.api.ActorSpotAnim;
+import net.runelite.api.ChatMessageType;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.NPC;
+import net.runelite.api.Player;
+import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.GraphicChanged;
+import net.runelite.api.events.NpcDespawned;
+import net.runelite.api.gameval.AnimationID;
+import net.runelite.api.gameval.NpcID;
+import net.runelite.api.gameval.SpotanimID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
-@Slf4j
 @PluginDescriptor(
 	name = "Beep Deep",
 	description = "Plays some beeps when you're deep within a raid.",
@@ -23,8 +36,12 @@ import net.runelite.client.plugins.PluginDescriptor;
 public class BeepDeepPlugin extends Plugin
 {
 	private static final int CRONDIS_PUZZLE_REGION = 15698;
-    private static final int TOA_VAULT_REGION = 14672;
-	private static final int VARBIT_ID_SARCOPHAGUS = 14373;
+	private static final int APMEKEN_PUZZLE_REGION = 15186;
+	private static final int BABA_REGION = 15188;
+	private static final int SCABARAS_PUZZLE_REGION = 14162;
+	private static final int HET_PUZZLE_REGION = 14674;
+	private static final int AKKHA_REGION = 14676;
+	private static final int TOA_VAULT_REGION = 14672;
 
 	private static final int TICKS_TO_WAIT_FOR_HET_COMPLETE = 25;
 	private static final String HET_SEAL_STRUCK = "The statue has been struck! The seal weakens!";
@@ -38,13 +55,10 @@ public class BeepDeepPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private BeepDeepConfig config;
-
-	@Inject
 	private SoundManager soundManager;
 
 	private int currentRegion = -1;
-	private boolean inCrondisPuzzle = false;
+	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
 	private int hetSealWaitingTick = -1;
 
 	@Override
@@ -64,7 +78,7 @@ public class BeepDeepPlugin extends Plugin
 	private void resetState()
 	{
 		currentRegion = -1;
-		inCrondisPuzzle = false;
+		orbImpactCycles.clear();
 		hetSealWaitingTick = -1;
 	}
 
@@ -87,83 +101,155 @@ public class BeepDeepPlugin extends Plugin
 	@Subscribe
 	public void onGameTick(GameTick tick)
 	{
-		// Check Het seal completion deadline
-		if (hetSealWaitingTick > 0)
+		if (client.getGameState() != GameState.LOGGED_IN)
 		{
-			hetSealWaitingTick--;
-			if (hetSealWaitingTick == 0)
-			{
-				soundManager.trigger(ToaEvent.HET_ONE_PHASE_FAIL);
-			}
+			return;
 		}
-
 		Player local = client.getLocalPlayer();
 		if (local == null)
 		{
 			return;
 		}
 
-		LocalPoint lp = local.getLocalLocation();
-		if (lp == null)
+		int region = regionOf(local);
+		if (region != currentRegion)
 		{
-			return;
+			int previous = currentRegion;
+			currentRegion = region;
+			onRegionChanged(previous, region);
 		}
 
-		WorldPoint wp = WorldPoint.fromLocalInstance(client, lp);
-		int region = wp == null ? -1 : wp.getRegionID();
-		if (region == currentRegion)
+		// Process the deadline after transitions, so leaving Het cancels it first.
+		if (hetSealWaitingTick > 0 && --hetSealWaitingTick == 0)
 		{
-			return;
+			hetSealWaitingTick = -1;
+			soundManager.trigger(ToaEvent.HET_ONE_PHASE_FAIL);
 		}
-
-		int previous = currentRegion;
-		currentRegion = region;
-		onRegionChanged(previous, region);
 	}
 
-    // Enter or leave Crondis challenge room
+	// Enter or leave a path's puzzle room, once per region transition.
 	private void onRegionChanged(int previous, int region)
 	{
-		boolean nowInCrondis = region == CRONDIS_PUZZLE_REGION;
-		if (nowInCrondis && !inCrondisPuzzle)
+		ToaEvent leave = puzzleRoomEvent(previous, false);
+		if (leave != null)
 		{
-			soundManager.trigger(ToaEvent.CRONDIS_ENTER);
+			soundManager.trigger(leave);
 		}
-		else if (!nowInCrondis && inCrondisPuzzle)
+		ToaEvent enter = puzzleRoomEvent(region, true);
+		if (enter != null)
 		{
-			soundManager.trigger(ToaEvent.CRONDIS_LEAVE);
+			soundManager.trigger(enter);
 		}
-		inCrondisPuzzle = nowInCrondis;
+		orbImpactCycles.clear();
 
-		// Reset Het seal wait if leaving raid
-		if (notInInstance())
+		if (region != HET_PUZZLE_REGION)
 		{
 			hetSealWaitingTick = -1;
 		}
 
-        // Vault loot room event
-        if (region == TOA_VAULT_REGION) {
-            int varbitValue = client.getVarbitValue(VARBIT_ID_SARCOPHAGUS);
-            soundManager.trigger(determineVaultLootEvent(varbitValue));
-        }
+		if (region == TOA_VAULT_REGION)
+		{
+			int varbitValue = client.getVarbitValue(VarbitID.TOA_VAULT_SARCOPHAGUS);
+			soundManager.trigger(determineVaultLootEvent(varbitValue));
+		}
 	}
 
-    private ToaEvent determineVaultLootEvent(int varbitValue)
-    {
-        return (varbitValue & 1) != 0 ? ToaEvent.VAULT_RARE_LOOT : ToaEvent.VAULT_NO_RARE_LOOT;
-    }
+	private static ToaEvent puzzleRoomEvent(int region, boolean entering)
+	{
+		switch (region)
+		{
+			case CRONDIS_PUZZLE_REGION:
+				return entering ? ToaEvent.CRONDIS_ENTER : ToaEvent.CRONDIS_LEAVE;
+			case APMEKEN_PUZZLE_REGION:
+				return entering ? ToaEvent.APMEKEN_ENTER : ToaEvent.APMEKEN_LEAVE;
+			case SCABARAS_PUZZLE_REGION:
+				return entering ? ToaEvent.SCABARAS_ENTER : ToaEvent.SCABARAS_LEAVE;
+			case HET_PUZZLE_REGION:
+				return entering ? ToaEvent.HET_ENTER : ToaEvent.HET_LEAVE;
+			default:
+				return null;
+		}
+	}
 
+	@Subscribe
+	public void onAnimationChanged(AnimationChanged event)
+	{
+		// Players use the generic slip animation, which must be scoped to Ba-Ba's room.
+		if (event.getActor() instanceof Player && !notInInstance()
+			&& isBananaSlip(regionOf((Player) event.getActor()), event.getActor().getAnimation()))
+		{
+			soundManager.trigger(ToaEvent.BABA_BANANA_SLIP);
+		}
+	}
+
+	static boolean isBananaSlip(int region, int animation)
+	{
+		return region == BABA_REGION && animation == AnimationID.ROYAL_HUMAN_SLIP_FALL;
+	}
+
+	@Subscribe
+	public void onGraphicChanged(GraphicChanged event)
+	{
+		if (!(event.getActor() instanceof NPC) || notInInstance())
+		{
+			return;
+		}
+
+		NPC orb = (NPC) event.getActor();
+		Player local = client.getLocalPlayer();
+		if (orb.getId() != NpcID.AKKHA_ENRAGE_ORB
+			|| local == null || regionOf(local) != AKKHA_REGION)
+		{
+			return;
+		}
+
+		// The orb itself receives the impact graphic when it hits any player.
+		// No player-position check is needed because every teammate's hit should play.
+		for (ActorSpotAnim spotAnim : orb.getSpotAnims())
+		{
+			if (spotAnim.getId() == SpotanimID.AKKHA_ENRAGE_ORB_IMPACT)
+			{
+				if (recordOrbImpact(orb.getIndex(), spotAnim.getStartCycle()))
+				{
+					soundManager.trigger(ToaEvent.HET_UNSTABLE_ORB_HIT);
+				}
+				return;
+			}
+		}
+	}
+
+	boolean recordOrbImpact(int npcIndex, int cycle)
+	{
+		Integer previousCycle = orbImpactCycles.put(npcIndex, cycle);
+		return previousCycle == null || previousCycle != cycle;
+	}
+
+	@Subscribe
+	public void onNpcDespawned(NpcDespawned event)
+	{
+		orbImpactCycles.remove(event.getNpc().getIndex());
+	}
+
+	private static ToaEvent determineVaultLootEvent(int varbitValue)
+	{
+		return (varbitValue & 1) != 0 ? ToaEvent.VAULT_RARE_LOOT : ToaEvent.VAULT_NO_RARE_LOOT;
+	}
+
+	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		if (notInInstance())
+		if (notInInstance() || (event.getType() != ChatMessageType.GAMEMESSAGE
+			&& event.getType() != ChatMessageType.SPAM))
 		{
 			return;
 		}
 
 		String message = event.getMessage();
+		Player local = client.getLocalPlayer();
+		int region = local == null ? -1 : regionOf(local);
 
 		// Het seal struck: start countdown to failure if not completed
-		if (message.contains(HET_SEAL_STRUCK))
+		if (region == HET_PUZZLE_REGION && message.contains(HET_SEAL_STRUCK))
 		{
 			hetSealWaitingTick = TICKS_TO_WAIT_FOR_HET_COMPLETE;
 		}
@@ -175,12 +261,23 @@ public class BeepDeepPlugin extends Plugin
 		}
 
 		// Apmeken failures
-		if (message.contains(APMEKEN_FAIL_DEBRIS)
+		if (region == APMEKEN_PUZZLE_REGION && (message.contains(APMEKEN_FAIL_DEBRIS)
 			|| message.contains(APMEKEN_FAIL_FUMES)
-			|| message.contains(APMEKEN_FAIL_CORRUPTION))
+			|| message.contains(APMEKEN_FAIL_CORRUPTION)))
 		{
 			soundManager.trigger(ToaEvent.APMEKEN_FAIL);
 		}
+	}
+
+	private int regionOf(Player player)
+	{
+		LocalPoint location = player.getLocalLocation();
+		if (location == null || notInInstance())
+		{
+			return -1;
+		}
+		WorldPoint worldPoint = WorldPoint.fromLocalInstance(client, location);
+		return worldPoint == null ? -1 : worldPoint.getRegionID();
 	}
 
 	private boolean notInInstance()

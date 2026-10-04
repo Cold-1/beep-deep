@@ -1,15 +1,22 @@
 package com.beepdeep;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BooleanSupplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -23,43 +30,87 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Resolves a configured sound source (a local file path or an http(s) URL) into
- * a playable {@link File}. Remote sounds are downloaded once via OkHttp and
- * cached under {@code .runelite/beep-deep/cache}.
- *
- * <p>All disk and network access happens off the client thread: cache lookups
- * are performed on the {@link SoundManager} audio executor and downloads run on
- * the OkHttp dispatcher.
+ * Resolves local files and caches remote sounds. Disk operations run on the audio
+ * executor or OkHttp dispatcher, never on the client thread.
  */
 @Singleton
 @Slf4j
 class SoundFileResolver
 {
-	/** Hard cap on a single downloaded sound to avoid filling the disk. */
-	private static final long MAX_DOWNLOAD_BYTES = 25L * 1024 * 1024;
-
+	static final long MAX_DOWNLOAD_BYTES = 25L * 1024 * 1024;
 	private static final File CACHE_DIR =
-		new File(RuneLite.RUNELITE_DIR, "beep-deep" + File.separator + "cache");
+		RuneLite.RUNELITE_DIR.toPath().resolve("plugin-data").resolve("beep-deep").resolve("cache").toFile();
 
 	private final OkHttpClient httpClient;
+	private final File cacheDir;
+	private final Map<String, Download> downloads = new HashMap<>();
+	private boolean running;
 
 	@Inject
 	SoundFileResolver(OkHttpClient httpClient)
 	{
-		this.httpClient = httpClient;
+		this(httpClient, CACHE_DIR);
 	}
 
-	boolean isRemote(String source)
+	SoundFileResolver(OkHttpClient httpClient, File cacheDir)
 	{
-		String s = source.toLowerCase();
-		return s.startsWith("http://") || s.startsWith("https://");
+		this.httpClient = httpClient;
+		this.cacheDir = cacheDir;
 	}
 
-	/**
-	 * Returns the cached file for a URL if it has already been downloaded, or
-	 * {@code null} if it still needs to be fetched. Performs a disk stat, so it
-	 * must be called off the client thread.
-	 */
+	synchronized void startUp()
+	{
+		running = true;
+	}
+
+	synchronized void shutDown()
+	{
+		running = false;
+		for (Download download : downloads.values())
+		{
+			download.call.cancel();
+			download.result.cancel(false);
+		}
+		downloads.clear();
+	}
+
+	static boolean isRemote(String source)
+	{
+		String normalized = source.toLowerCase(Locale.ROOT);
+		return normalized.startsWith("http://") || normalized.startsWith("https://");
+	}
+
+	/** Absolute paths may be external; relative paths resolve from .runelite. */
+	File localFile(String source) throws IOException
+	{
+		return localFile(RuneLite.RUNELITE_DIR.toPath(), source);
+	}
+
+	static File localFile(Path root, String source) throws IOException
+	{
+		Path configured = Path.of(source);
+		Path resolved;
+		if (configured.isAbsolute())
+		{
+			resolved = configured.toRealPath();
+		}
+		else
+		{
+			Path resolvedRoot = root.toRealPath();
+			resolved = resolvedRoot.resolve(configured).toRealPath();
+			if (!resolved.startsWith(resolvedRoot))
+			{
+				throw new IOException("Relative sound paths must stay inside .runelite");
+			}
+		}
+		if (!Files.isRegularFile(resolved))
+		{
+			throw new IOException("Sound paths must point to regular files");
+		}
+		return resolved.toFile();
+	}
+
+	/** Performs a disk stat; call off the client thread. */
 	File cachedFile(String url)
 	{
 		File file = cacheFileFor(url);
@@ -67,126 +118,148 @@ class SoundFileResolver
 	}
 
 	/**
-	 * Downloads a remote sound and invokes {@code onReady} with the cached file
-	 * once it is available. The download runs on the OkHttp dispatcher; the
-	 * callback is invoked on that same OkHttp thread.
+	 * Shares in-flight requests for the same URL. Failed downloads resolve to null,
+	 * allowing the next trigger to retry. Shutdown cancels only this plugin's calls.
 	 */
-	void download(String url, Consumer<File> onReady)
+	synchronized CompletableFuture<File> download(String url, BooleanSupplier active)
 	{
+		if (!running || !active.getAsBoolean())
+		{
+			return CompletableFuture.completedFuture(null);
+		}
+		Download pending = downloads.get(url);
+		if (pending != null)
+		{
+			return pending.result;
+		}
+
 		HttpUrl parsed = HttpUrl.parse(url);
 		if (parsed == null)
 		{
-			log.warn("Beep Deep: invalid sound URL {}", url);
-			return;
+			log.debug("Beep Deep: invalid sound URL {}", url);
+			return CompletableFuture.completedFuture(null);
 		}
 
-		Request request = new Request.Builder().url(parsed).build();
-		httpClient.newCall(request).enqueue(new Callback()
+		Call call = httpClient.newCall(new Request.Builder().url(parsed).build());
+		Download download = new Download(call);
+		downloads.put(url, download);
+		call.enqueue(new Callback()
 		{
 			@Override
-			public void onFailure(Call call, IOException e)
+			public void onFailure(Call failedCall, IOException e)
 			{
-				log.warn("Beep Deep: failed to download sound {}: {}", url, e.getMessage());
+				log.debug("Beep Deep: sound download failed for {}: {}", url, e.getMessage());
+				finish(url, download, null);
 			}
 
 			@Override
-			public void onResponse(Call call, Response response)
+			public void onResponse(Call responseCall, Response response)
 			{
+				File file = null;
 				try (Response res = response)
 				{
-					if (!res.isSuccessful())
-					{
-						log.warn("Beep Deep: failed to download sound {}: HTTP {}", url, res.code());
-						return;
-					}
-
 					ResponseBody body = res.body();
-					if (body == null)
+					if (!res.isSuccessful() || body == null || body.contentLength() > MAX_DOWNLOAD_BYTES)
 					{
-						log.warn("Beep Deep: empty response body for sound {}", url);
+						log.debug("Beep Deep: rejected sound response for {} (HTTP {})", url, res.code());
 						return;
 					}
-
 					File target = cacheFileFor(url);
-					if (writeToCache(body.byteStream(), target))
+					try (InputStream in = body.byteStream())
 					{
-						onReady.accept(target);
+						writeToCache(in, target.toPath(), responseCall::isCanceled);
 					}
+					if (!responseCall.isCanceled())
+					{
+						file = target;
+					}
+				}
+				catch (IOException e)
+				{
+					log.debug("Beep Deep: could not cache sound {}: {}", url, e.getMessage());
+				}
+				finally
+				{
+					finish(url, download, file);
 				}
 			}
 		});
+		return download.result;
 	}
 
-	private boolean writeToCache(InputStream in, File target)
+	private void finish(String url, Download download, File file)
 	{
-		File dir = target.getParentFile();
-		if (dir != null && !dir.isDirectory() && !dir.mkdirs())
+		synchronized (this)
 		{
-			log.warn("Beep Deep: could not create cache directory {}", dir);
-			return false;
+			downloads.remove(url, download);
 		}
+		download.result.complete(file);
+	}
 
-		File tmp = new File(target.getParentFile(), target.getName() + ".tmp");
-		long total = 0;
-		try (OutputStream out = new FileOutputStream(tmp))
+	/**
+	 * Publishes only complete, non-empty downloads. Each writer has its own temp
+	 * file so cancellation and retries cannot overwrite another writer's work.
+	 */
+	static void writeToCache(InputStream in, Path target, BooleanSupplier canceled) throws IOException
+	{
+		Files.createDirectories(target.getParent());
+		Path temporary = Files.createTempFile(target.getParent(), "sound-", ".tmp");
+		try
 		{
-			byte[] buffer = new byte[8192];
-			int read;
-			while ((read = in.read(buffer)) != -1)
+			long total = 0;
+			try (OutputStream out = Files.newOutputStream(temporary))
 			{
-				total += read;
-				if (total > MAX_DOWNLOAD_BYTES)
+				byte[] buffer = new byte[8192];
+				int read;
+				while ((read = in.read(buffer)) != -1)
 				{
-					log.warn("Beep Deep: sound download exceeded {} bytes, aborting {}", MAX_DOWNLOAD_BYTES, target.getName());
-					out.close();
-					//noinspection ResultOfMethodCallIgnored
-					tmp.delete();
-					return false;
+					total += read;
+					if (canceled.getAsBoolean() || total > MAX_DOWNLOAD_BYTES)
+					{
+						throw new IOException("Sound download canceled or exceeded size limit");
+					}
+					out.write(buffer, 0, read);
 				}
-				out.write(buffer, 0, read);
+			}
+			if (total == 0 || canceled.getAsBoolean())
+			{
+				throw new IOException("Sound download empty or canceled");
+			}
+			try
+			{
+				Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+			}
+			catch (AtomicMoveNotSupportedException e)
+			{
+				Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
 			}
 		}
-		catch (IOException e)
+		finally
 		{
-			log.warn("Beep Deep: error writing sound cache for {}: {}", target.getName(), e.getMessage());
-			//noinspection ResultOfMethodCallIgnored
-			tmp.delete();
-			return false;
+			Files.deleteIfExists(temporary);
 		}
-
-		//noinspection ResultOfMethodCallIgnored
-		target.delete();
-		if (!tmp.renameTo(target))
-		{
-			log.warn("Beep Deep: could not finalize sound cache file {}", target.getName());
-			//noinspection ResultOfMethodCallIgnored
-			tmp.delete();
-			return false;
-		}
-		return true;
 	}
 
 	private File cacheFileFor(String url)
 	{
-		return new File(CACHE_DIR, hash(url) + extensionOf(url));
+		return new File(cacheDir, hash(url) + extensionOf(url));
 	}
 
-	private static String extensionOf(String url)
+	static String extensionOf(String url)
 	{
-		String path = url;
-		int query = path.indexOf('?');
-		if (query >= 0)
+		HttpUrl parsed = HttpUrl.parse(url);
+		if (parsed == null)
 		{
-			path = path.substring(0, query);
+			return ".wav";
 		}
-		int slash = path.lastIndexOf('/');
+		String path = parsed.encodedPath();
 		int dot = path.lastIndexOf('.');
-		if (dot > slash && dot < path.length() - 1)
+		if (dot > path.lastIndexOf('/'))
 		{
-			String ext = path.substring(dot);
-			if (ext.length() <= 6)
+			String extension = path.substring(dot);
+			if (extension.matches("\\.[a-zA-Z0-9]{1,5}"))
 			{
-				return ext;
+				return extension;
 			}
 		}
 		return ".wav";
@@ -202,7 +275,18 @@ class SoundFileResolver
 		}
 		catch (NoSuchAlgorithmException e)
 		{
-			return Integer.toHexString(url.hashCode());
+			throw new IllegalStateException("SHA-256 is required by Java", e);
+		}
+	}
+
+	private static final class Download
+	{
+		private final Call call;
+		private final CompletableFuture<File> result = new CompletableFuture<>();
+
+		private Download(Call call)
+		{
+			this.call = call;
 		}
 	}
 }

@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
-import net.runelite.client.config.ConfigManager;
 
 /**
  * Selects and plays the sounds configured for a {@link ToaEvent}.
  *
- * <p>Slots are read generically from the config so there is no per-event switch.
+ * <p>Slots use the typed config bindings in {@link ToaEvent}.
  * One non-empty slot is chosen at random per trigger. Decoding and playback run
  * on a dedicated single background thread because {@link AudioPlayer#play} buffers
  * the whole clip synchronously and must never run on the client thread.
@@ -32,23 +32,23 @@ class SoundManager
 	private final AudioPlayer audioPlayer;
 	private final SoundFileResolver resolver;
 	private final BeepDeepConfig config;
-	private final ConfigManager configManager;
 	private final Random random = new Random();
 
-	private ExecutorService executor;
+	private volatile ExecutorService executor;
 
 	@Inject
-	SoundManager(Client client, AudioPlayer audioPlayer, SoundFileResolver resolver, BeepDeepConfig config, ConfigManager configManager)
+	SoundManager(Client client, AudioPlayer audioPlayer, SoundFileResolver resolver, BeepDeepConfig config)
 	{
 		this.client = client;
 		this.audioPlayer = audioPlayer;
 		this.resolver = resolver;
 		this.config = config;
-		this.configManager = configManager;
 	}
 
 	void startUp()
 	{
+		shutDown();
+		resolver.startUp();
 		executor = Executors.newSingleThreadExecutor(r ->
 		{
 			Thread thread = new Thread(r, "beep-deep-audio");
@@ -59,10 +59,12 @@ class SoundManager
 
 	void shutDown()
 	{
-		if (executor != null)
+		ExecutorService session = executor;
+		executor = null;
+		resolver.shutDown();
+		if (session != null)
 		{
-			executor.shutdownNow();
-			executor = null;
+			session.shutdownNow();
 		}
 	}
 
@@ -73,7 +75,8 @@ class SoundManager
 	 */
 	void trigger(ToaEvent event)
 	{
-		if (!isEnabled(event))
+		ExecutorService session = executor;
+		if (session == null || !event.isEnabled(config))
 		{
 			return;
 		}
@@ -85,6 +88,10 @@ class SoundManager
 		}
 
 		Slot chosen = slots.get(random.nextInt(slots.size()));
+		if (chosen.volume == 0)
+		{
+			return;
+		}
 		log.debug("Beep Deep: event {} -> playing '{}' at volume {}", event, chosen.source, chosen.volume);
 
 		// Try to parse as sound effect ID (must run on client thread)
@@ -96,17 +103,13 @@ class SoundManager
 		}
 
 		// File/URL handling (offload to executor for blocking I/O)
-		ExecutorService ex = executor;
-		if (ex != null)
-		{
-			ex.submit(() -> resolveAndPlayFile(chosen.source, chosen.volume));
-		}
+		submit(session, () -> resolveAndPlayFile(session, chosen.source, chosen.volume));
 	}
 
-	private void resolveAndPlayFile(String source, int volume)
+	private void resolveAndPlayFile(ExecutorService session, String source, int volume)
 	{
 		// Treat as file path or URL
-		if (resolver.isRemote(source))
+		if (SoundFileResolver.isRemote(source))
 		{
 			if (!config.enableRemoteUrls())
 			{
@@ -117,28 +120,66 @@ class SoundManager
 			File cached = resolver.cachedFile(source);
 			if (cached != null)
 			{
-				playFile(cached, volume);
+				if (config.enableRemoteUrls())
+				{
+					playFile(session, cached, volume);
+				}
 				return;
 			}
 
-			resolver.download(source, file ->
+			resolver.download(source, () -> executor == session && config.enableRemoteUrls()).thenAccept(file ->
 			{
-				ExecutorService ex = executor;
-				if (ex != null)
+				if (file != null)
 				{
-					ex.submit(() -> playFile(file, volume));
+					submit(session, () ->
+					{
+						if (config.enableRemoteUrls())
+						{
+							playFile(session, file, volume);
+						}
+					});
 				}
 			});
 		}
 		else
 		{
-			playFile(new File(source), volume);
+			try
+			{
+				playFile(session, resolver.localFile(source), volume);
+			}
+			catch (IOException | IllegalArgumentException e)
+			{
+				log.debug("Beep Deep: could not resolve sound file {}: {}", source, e.getMessage());
+			}
 		}
 	}
 
-	private void playFile(File file, int volume)
+	/** Capture the originating session so old callbacks cannot play after a restart. */
+	private void submit(ExecutorService session, Runnable task)
 	{
-		if (volume <= 0)
+		if (executor != session)
+		{
+			return;
+		}
+		try
+		{
+			session.execute(() ->
+			{
+				if (executor == session && !Thread.currentThread().isInterrupted())
+				{
+					task.run();
+				}
+			});
+		}
+		catch (RejectedExecutionException e)
+		{
+			log.debug("Beep Deep: audio session stopped before work could be queued");
+		}
+	}
+
+	private void playFile(ExecutorService session, File file, int volume)
+	{
+		if (volume <= 0 || executor != session || Thread.currentThread().isInterrupted())
 		{
 			return;
 		}
@@ -148,14 +189,10 @@ class SoundManager
 			audioPlayer.play(file, gainForVolume(volume));
 		}
 
-		catch (IOException e)
+		catch (Exception e)
 		{
-			log.warn("Beep Deep: could not read sound file {}: {}", file, e.getMessage());
+			log.debug("Beep Deep: could not play sound file {}: {}", file, e.getMessage());
 		}
-        catch (Exception e)
-        {
-            log.warn("Beep Deep: Unable to play audio file {} error: {}", file, e.getMessage());
-        }
 	}
 
 	/**
@@ -169,16 +206,16 @@ class SoundManager
 		{
 			client.playSoundEffect(soundId, effectVolume);
 		}
-		catch (Exception e)
+		catch (RuntimeException e)
 		{
-			log.warn("Beep Deep: failed to play sound effect {}: {}", soundId, e.getMessage());
+			log.debug("Beep Deep: failed to play sound effect {}: {}", soundId, e.getMessage());
 		}
 	}
 
 	/**
-	 * Converts 0-100 volume to 0-127 MIDI range (0=silent, 127=max volume).
+	 * Converts 0-100 volume to the client's 0-127 sound effect range.
 	 */
-	private static int effectVolumeFromPercent(int percent)
+	static int effectVolumeFromPercent(int percent)
 	{
 		if (percent <= 0)
 		{
@@ -191,7 +228,7 @@ class SoundManager
 	 * Tries to parse source as a sound effect ID (numeric).
 	 * Returns null if not numeric.
 	 */
-	private static Integer tryParseSoundId(String source)
+	static Integer tryParseSoundId(String source)
 	{
 		if (source == null || source.isEmpty())
 		{
@@ -214,44 +251,19 @@ class SoundManager
 		}
 	}
 
-	private boolean isEnabled(ToaEvent event)
-	{
-		String value = configManager.getConfiguration(BeepDeepConfig.GROUP, event.enabledKey());
-		// Events default to enabled (see BeepDeepConfig); only an explicit "false" disables one.
-		return !"false".equals(value);
-	}
-
 	private List<Slot> filledSlots(ToaEvent event)
 	{
 		List<Slot> slots = new ArrayList<>();
-		for (int slot = 1; slot <= ToaEvent.SLOT_COUNT; slot++)
+		for (ToaEvent.SoundSlot slot : event.getSlots())
 		{
-			String source = configManager.getConfiguration(BeepDeepConfig.GROUP, event.soundKey(slot));
-			if (source == null || source.trim().isEmpty())
+			String source = normalizeSource(slot.source(config));
+			if (source.isEmpty())
 			{
 				continue;
 			}
-			source = stripQuotes(source.trim());
-			slots.add(new Slot(source, readVolume(event, slot)));
+			slots.add(new Slot(source, slot.volume(config)));
 		}
 		return slots;
-	}
-
-	private int readVolume(ToaEvent event, int slot)
-	{
-		String value = configManager.getConfiguration(BeepDeepConfig.GROUP, event.volumeKey(slot));
-		if (value == null)
-		{
-			return 100;
-		}
-		try
-		{
-			return Math.max(0, Math.min(100, Integer.parseInt(value.trim())));
-		}
-		catch (NumberFormatException e)
-		{
-			return 100;
-		}
 	}
 
 	/**
@@ -265,14 +277,19 @@ class SoundManager
 
 	/**
 	 * Strips surrounding double quotes from a path if present.
-	 * Allows users to configure paths like: C:\sounds\alert.wav or "C:\sounds\alert.wav"
+	 * Allows quoted file paths pasted from a file manager.
 	 * Numeric strings (sound IDs) are not affected.
 	 */
-	private static String stripQuotes(String source)
+	static String normalizeSource(String source)
 	{
+		if (source == null)
+		{
+			return "";
+		}
+		source = source.trim();
 		if (source.length() >= 2 && source.startsWith("\"") && source.endsWith("\""))
 		{
-			return source.substring(1, source.length() - 1);
+			return source.substring(1, source.length() - 1).trim();
 		}
 		return source;
 	}
