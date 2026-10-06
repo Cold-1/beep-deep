@@ -1,13 +1,16 @@
 package com.beepdeep;
 
 import com.google.inject.Provides;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import net.runelite.api.ActorSpotAnim;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.GraphicsObject;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.WorldView;
@@ -18,6 +21,7 @@ import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GraphicChanged;
+import net.runelite.api.events.GraphicsObjectCreated;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.gameval.AnimationID;
 import net.runelite.api.gameval.NpcID;
@@ -51,6 +55,8 @@ public class BeepDeepPlugin extends Plugin
 	private static final String APMEKEN_FAIL_FUMES = "The fumes filling the room suddenly ignite!";
 	private static final String APMEKEN_FAIL_CORRUPTION = "Your group is overwhelmed by Amascut's corruption!";
 
+	private static final int SCABARAS_ROCKFALL_DURATION = 5;
+
 	@Inject
 	private Client client;
 
@@ -60,6 +66,8 @@ public class BeepDeepPlugin extends Plugin
 	private int currentRegion = -1;
 	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
 	private int hetSealWaitingTick = -1;
+	private int scabarasRockfallTick = -1;
+	private final List<GraphicsObject> scabarasRocks = new ArrayList<>();
 
 	@Override
 	protected void startUp()
@@ -125,6 +133,21 @@ public class BeepDeepPlugin extends Plugin
 			hetSealWaitingTick = -1;
 			soundManager.trigger(ToaEvent.HET_ONE_PHASE_FAIL);
 		}
+
+		if (!scabarasRocks.isEmpty())
+		{
+			if (client.getTickCount() >= scabarasRockfallTick + SCABARAS_ROCKFALL_DURATION)
+			{
+				for (GraphicsObject graphicsObject : scabarasRocks)
+				{
+					if (local.getWorldLocation().equals(WorldPoint.fromLocal(client, graphicsObject.getLocation())))
+					{
+						soundManager.trigger(ToaEvent.SCABARAS_ROCKFALL);
+					}
+				}
+				scabarasRocks.clear();
+			}
+		}
 	}
 
 	// Enter or leave a path's puzzle room, once per region transition.
@@ -141,6 +164,7 @@ public class BeepDeepPlugin extends Plugin
 			soundManager.trigger(enter);
 		}
 		orbImpactCycles.clear();
+		scabarasRocks.clear();
 
 		if (region != HET_PUZZLE_REGION)
 		{
@@ -185,6 +209,20 @@ public class BeepDeepPlugin extends Plugin
 	static boolean isBananaSlip(int region, int animation)
 	{
 		return region == BABA_REGION && animation == AnimationID.ROYAL_HUMAN_SLIP_FALL;
+	}
+
+	@Subscribe
+	public void onGraphicsObjectCreated(GraphicsObjectCreated graphicsObjectCreated)
+	{
+		if (currentRegion == SCABARAS_PUZZLE_REGION)
+		{
+			GraphicsObject graphicsObject = graphicsObjectCreated.getGraphicsObject();
+			if (graphicsObject.getId() == SpotanimID.GA_BEAST_ROCK_FALL)
+			{
+				scabarasRocks.add(graphicsObject);
+				scabarasRockfallTick = client.getTickCount();
+			}
+		}
 	}
 
 	@Subscribe

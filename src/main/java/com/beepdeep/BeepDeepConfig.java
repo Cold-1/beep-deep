@@ -643,12 +643,98 @@ public interface BeepDeepConfig extends Config
 		return 50;
 	}
 
+	// ===================== Path of Scabaras: Obelisks Rockfall =====================
+
+	@ConfigSection(
+		name = "Path of Scabaras - Obelisks Rockfall",
+		description = "Sounds played when you get hit by rockfall during the obelisks puzzle.",
+		position = 9,
+		closedByDefault = true
+	)
+	String scabarasRockfallSection = "scabarasRockfallSection";
+
+	@ConfigItem(keyName = "scabarasRockfallEnabled", name = "Enabled", description = "Play a sound for this event.", section = scabarasRockfallSection, position = 0)
+	default boolean scabarasRockfallEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "scabarasRockfallSound1", name = "Sound 1", description = SOUND_DESC, section = scabarasRockfallSection, position = 1)
+	default String scabarasRockfallSound1()
+	{
+		return "2192";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasRockfallVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasRockfallSection, position = 2)
+	default int scabarasRockfallVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasRockfallSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasRockfallSection, position = 3)
+	default String scabarasRockfallSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasRockfallVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasRockfallSection, position = 4)
+	default int scabarasRockfallVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasRockfallSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasRockfallSection, position = 5)
+	default String scabarasRockfallSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasRockfallVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasRockfallSection, position = 6)
+	default int scabarasRockfallVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasRockfallSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasRockfallSection, position = 7)
+	default String scabarasRockfallSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasRockfallVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasRockfallSection, position = 8)
+	default int scabarasRockfallVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasRockfallSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasRockfallSection, position = 9)
+	default String scabarasRockfallSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasRockfallVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasRockfallSection, position = 10)
+	default int scabarasRockfallVolume5()
+	{
+		return 50;
+	}
+
 	// ===================== Path of Het: Enter =====================
 
 	@ConfigSection(
 		name = "Path of Het - Enter",
 		description = "Sounds played when you enter the Path of Het room.",
-		position = 9,
+		position = 10,
 		closedByDefault = true
 	)
 	String hetEnterSection = "hetEnterSection";
@@ -734,7 +820,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Leave",
 		description = "Sounds played when you leave the Path of Het room.",
-		position = 10,
+		position = 11,
 		closedByDefault = true
 	)
 	String hetLeaveSection = "hetLeaveSection";
@@ -820,7 +906,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Unstable Orb Hit",
 		description = "Sounds played when any player is hit by an Unstable Orb in Akkha's arena.",
-		position = 12,
+		position = 13,
 		closedByDefault = true
 	)
 	String hetUnstableOrbHitSection = "hetUnstableOrbHitSection";
@@ -906,7 +992,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Seal Not One-Phased",
 		description = "Sounds played when the Path of Het seal is not killed in one phase.",
-		position = 11,
+		position = 12,
 		closedByDefault = true
 	)
 	String hetOnePhaseFailSection = "hetOnePhaseFailSection";
@@ -1078,7 +1164,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - No Rare Loot",
 		description = "Sounds played when the ToA vault opens without rare loot.",
-		position = 13,
+		position = 14,
 		closedByDefault = true
 	)
 	String vaultNoRareLootSection = "vaultNoRareLootSection";
@@ -1164,7 +1250,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - Rare Loot",
 		description = "Sounds played when the ToA vault opens with rare loot.",
-		position = 14,
+		position = 15,
 		closedByDefault = true
 	)
 	String vaultRareLootSection = "vaultRareLootSection";
