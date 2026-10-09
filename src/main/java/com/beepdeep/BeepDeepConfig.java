@@ -729,12 +729,184 @@ public interface BeepDeepConfig extends Config
 		return 50;
 	}
 
+	// ===================== Path of Scabaras: Sequence Failure =====================
+
+	@ConfigSection(
+		name = "Path of Scabaras - Sequence Failure",
+		description = "Sounds played when you fail the sequence pressure plate puzzle (Wiki puzzle #1).",
+		position = 10,
+		closedByDefault = true
+	)
+	String scabarasSequenceFailSection = "scabarasSequenceFailSection";
+
+	@ConfigItem(keyName = "scabarasSequenceFailEnabled", name = "Enabled", description = "Play a sound for this event.", section = scabarasSequenceFailSection, position = 0)
+	default boolean scabarasSequenceFailEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "scabarasSequenceFailSound1", name = "Sound 1", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 1)
+	default String scabarasSequenceFailSound1()
+	{
+		return "3892";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasSequenceFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasSequenceFailSection, position = 2)
+	default int scabarasSequenceFailVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasSequenceFailSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 3)
+	default String scabarasSequenceFailSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasSequenceFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasSequenceFailSection, position = 4)
+	default int scabarasSequenceFailVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasSequenceFailSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 5)
+	default String scabarasSequenceFailSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasSequenceFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasSequenceFailSection, position = 6)
+	default int scabarasSequenceFailVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasSequenceFailSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 7)
+	default String scabarasSequenceFailSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasSequenceFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasSequenceFailSection, position = 8)
+	default int scabarasSequenceFailVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasSequenceFailSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 9)
+	default String scabarasSequenceFailSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasSequenceFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasSequenceFailSection, position = 10)
+	default int scabarasSequenceFailVolume5()
+	{
+		return 50;
+	}
+
+	// ===================== Path of Scabaras: Number Puzzle Failure =====================
+
+	@ConfigSection(
+		name = "Path of Scabaras - Number Puzzle Failure",
+		description = "Sounds played when an incorrect number puzzle solution deals damage (Wiki puzzle #4).",
+		position = 11,
+		closedByDefault = true
+	)
+	String scabarasNumberFailSection = "scabarasNumberFailSection";
+
+	@ConfigItem(keyName = "scabarasNumberFailEnabled", name = "Enabled", description = "Play a sound for this event.", section = scabarasNumberFailSection, position = 0)
+	default boolean scabarasNumberFailEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "scabarasNumberFailSound1", name = "Sound 1", description = SOUND_DESC, section = scabarasNumberFailSection, position = 1)
+	default String scabarasNumberFailSound1()
+	{
+		return "3892";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasNumberFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasNumberFailSection, position = 2)
+	default int scabarasNumberFailVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasNumberFailSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasNumberFailSection, position = 3)
+	default String scabarasNumberFailSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasNumberFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasNumberFailSection, position = 4)
+	default int scabarasNumberFailVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasNumberFailSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasNumberFailSection, position = 5)
+	default String scabarasNumberFailSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasNumberFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasNumberFailSection, position = 6)
+	default int scabarasNumberFailVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasNumberFailSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasNumberFailSection, position = 7)
+	default String scabarasNumberFailSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasNumberFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasNumberFailSection, position = 8)
+	default int scabarasNumberFailVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "scabarasNumberFailSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasNumberFailSection, position = 9)
+	default String scabarasNumberFailSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "scabarasNumberFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasNumberFailSection, position = 10)
+	default int scabarasNumberFailVolume5()
+	{
+		return 50;
+	}
+
 	// ===================== Path of Het: Enter =====================
 
 	@ConfigSection(
 		name = "Path of Het - Enter",
 		description = "Sounds played when you enter the Path of Het room.",
-		position = 10,
+		position = 12,
 		closedByDefault = true
 	)
 	String hetEnterSection = "hetEnterSection";
@@ -820,7 +992,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Leave",
 		description = "Sounds played when you leave the Path of Het room.",
-		position = 11,
+		position = 13,
 		closedByDefault = true
 	)
 	String hetLeaveSection = "hetLeaveSection";
@@ -906,7 +1078,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Unstable Orb Hit",
 		description = "Sounds played when any player is hit by an Unstable Orb in Akkha's arena.",
-		position = 13,
+		position = 15,
 		closedByDefault = true
 	)
 	String hetUnstableOrbHitSection = "hetUnstableOrbHitSection";
@@ -992,7 +1164,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Seal Not One-Phased",
 		description = "Sounds played when the Path of Het seal is not killed in one phase.",
-		position = 12,
+		position = 14,
 		closedByDefault = true
 	)
 	String hetOnePhaseFailSection = "hetOnePhaseFailSection";
@@ -1164,7 +1336,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - No Rare Loot",
 		description = "Sounds played when the ToA vault opens without rare loot.",
-		position = 14,
+		position = 16,
 		closedByDefault = true
 	)
 	String vaultNoRareLootSection = "vaultNoRareLootSection";
@@ -1250,7 +1422,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - Rare Loot",
 		description = "Sounds played when the ToA vault opens with rare loot.",
-		position = 15,
+		position = 17,
 		closedByDefault = true
 	)
 	String vaultRareLootSection = "vaultRareLootSection";

@@ -9,28 +9,39 @@ import javax.inject.Inject;
 import net.runelite.api.ActorSpotAnim;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
 import net.runelite.api.GraphicsObject;
+import net.runelite.api.GroundObject;
+import net.runelite.api.HitsplatID;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
+import net.runelite.api.Tile;
 import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GraphicChanged;
 import net.runelite.api.events.GraphicsObjectCreated;
+import net.runelite.api.events.HitsplatApplied;
+import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NpcDespawned;
+import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.gameval.AnimationID;
 import net.runelite.api.gameval.NpcID;
+import net.runelite.api.gameval.ObjectID;
 import net.runelite.api.gameval.SpotanimID;
 import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.Text;
 
 @PluginDescriptor(
 	name = "Beep Deep",
@@ -67,6 +78,8 @@ public class BeepDeepPlugin extends Plugin
 	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
 	private int hetSealWaitingTick = -1;
 	private int scabarasRockfallTick = -1;
+	private final ScabarasPuzzleTracker scabarasPuzzles = new ScabarasPuzzleTracker();
+	private boolean scabarasSnapshotPending = true;
 	private final List<GraphicsObject> scabarasRocks = new ArrayList<>();
 
 	@Override
@@ -88,6 +101,8 @@ public class BeepDeepPlugin extends Plugin
 		currentRegion = -1;
 		orbImpactCycles.clear();
 		hetSealWaitingTick = -1;
+		scabarasPuzzles.reset();
+		scabarasSnapshotPending = true;
 	}
 
 	@Provides
@@ -100,6 +115,11 @@ public class BeepDeepPlugin extends Plugin
 	public void onGameStateChanged(GameStateChanged event)
 	{
 		GameState state = event.getGameState();
+		if (state == GameState.LOADING)
+		{
+			scabarasPuzzles.reset();
+			scabarasSnapshotPending = true;
+		}
 		if (state == GameState.LOGIN_SCREEN || state == GameState.HOPPING || state == GameState.CONNECTION_LOST)
 		{
 			resetState();
@@ -125,6 +145,32 @@ public class BeepDeepPlugin extends Plugin
 			int previous = currentRegion;
 			currentRegion = region;
 			onRegionChanged(previous, region);
+		}
+
+		if (region == SCABARAS_PUZZLE_REGION)
+		{
+			Tile[][] tiles = scabarasTiles();
+			if (scabarasSnapshotPending && tiles != null)
+			{
+				scabarasPuzzles.snapshot(tiles);
+				scabarasSnapshotPending = false;
+			}
+			WorldView world = client.getTopLevelWorldView();
+			if (world.players() != null)
+			{
+				for (Player player : world.players())
+				{
+					if (player != null)
+					{
+						scabarasPuzzles.observe(player, client.getTickCount());
+					}
+				}
+			}
+			scabarasPuzzles.observe(local, client.getTickCount());
+			for (ToaEvent failure : scabarasPuzzles.finishTick(client.getTickCount()))
+			{
+				soundManager.trigger(failure);
+			}
 		}
 
 		// Process the deadline after transitions, so leaving Het cancels it first.
@@ -165,6 +211,11 @@ public class BeepDeepPlugin extends Plugin
 		}
 		orbImpactCycles.clear();
 		scabarasRocks.clear();
+		if (region != SCABARAS_PUZZLE_REGION)
+		{
+			scabarasPuzzles.reset();
+			scabarasSnapshotPending = true;
+		}
 
 		if (region != HET_PUZZLE_REGION)
 		{
@@ -214,15 +265,154 @@ public class BeepDeepPlugin extends Plugin
 	@Subscribe
 	public void onGraphicsObjectCreated(GraphicsObjectCreated graphicsObjectCreated)
 	{
+		GraphicsObject graphicsObject = graphicsObjectCreated.getGraphicsObject();
 		if (currentRegion == SCABARAS_PUZZLE_REGION)
 		{
-			GraphicsObject graphicsObject = graphicsObjectCreated.getGraphicsObject();
 			if (graphicsObject.getId() == SpotanimID.GA_BEAST_ROCK_FALL)
 			{
 				scabarasRocks.add(graphicsObject);
 				scabarasRockfallTick = client.getTickCount();
 			}
 		}
+	}
+
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned event)
+	{
+		if (inScabaras() && event.getGameObject().getLocalLocation() != null)
+		{
+			scabarasPuzzles.spawned(event.getTile(), event.getGameObject(), client.getTickCount());
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned event)
+	{
+		if (inScabaras())
+		{
+			scabarasPuzzles.despawned(event.getGameObject(), client.getTickCount());
+		}
+	}
+
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event)
+	{
+		if (inScabaras() && !event.isConsumed() && event.getId() == ObjectID.TOA_SCABARAS_SIMONSAYS_BUTTON
+			&& "Push".equals(event.getMenuOption()))
+		{
+			scabarasPuzzles.restartSequence();
+		}
+	}
+
+	@Subscribe
+	public void onHitsplatApplied(HitsplatApplied event)
+	{
+		if (!inScabaras() || !(event.getActor() instanceof Player))
+		{
+			return;
+		}
+		Player player = (Player) event.getActor();
+		if (player.getWorldView() != client.getTopLevelWorldView() || regionOf(player) != SCABARAS_PUZZLE_REGION)
+		{
+			return;
+		}
+		ToaEvent puzzle = scabarasPuzzleOf(player);
+		int type = event.getHitsplat().getHitsplatType();
+		boolean damage = event.getHitsplat().getAmount() > 0
+			&& (type == HitsplatID.DAMAGE_ME || type == HitsplatID.DAMAGE_OTHER || type == HitsplatID.DAMAGE_MAX_ME);
+		if (damage)
+		{
+			// Evaluate after all events for this tick, since resets and hitsplats can arrive
+			// in either order. A Scarab hit with unchanged puzzle state stays silent.
+			scabarasPuzzles.damaged(player, puzzle, client.getTickCount());
+		}
+	}
+
+	@Subscribe
+	public void onPlayerDespawned(PlayerDespawned event)
+	{
+		scabarasPuzzles.forget(event.getPlayer());
+	}
+
+	private boolean inScabaras()
+	{
+		Player local = client.getLocalPlayer();
+		return client.getGameState() == GameState.LOGGED_IN && local != null
+			&& regionOf(local) == SCABARAS_PUZZLE_REGION;
+	}
+
+	private Tile[][] scabarasTiles()
+	{
+		WorldView world = client.getTopLevelWorldView();
+		return world == null || world.getScene() == null ? null : world.getScene().getTiles()[world.getPlane()];
+	}
+
+	private ToaEvent scabarasPuzzleOf(Player player)
+	{
+		LocalPoint location = player.getLocalLocation();
+		Tile[][] tiles = scabarasTiles();
+		return location == null || tiles == null ? null
+			: scabarasPuzzleAt(tiles, location.getSceneX(), location.getSceneY());
+	}
+
+	private static ToaEvent scabarasPuzzleAt(Tile[][] tiles, int x, int y)
+	{
+		Tile tile = tileAt(tiles, x, y);
+		if (tile == null)
+		{
+			return null;
+		}
+		GroundObject plate = tile.getGroundObject();
+		if (plate != null)
+		{
+			switch (plate.getId())
+			{
+				case ObjectID.TOA_SCABARAS_SIMONSAYS_TILE_UP:
+				case ObjectID.TOA_SCABARAS_SIMONSAYS_TILE_DOWN:
+				case ObjectID.TOA_SCABARAS_SIMONSAYS_TILE_DOWN_PLAYER:
+					return ToaEvent.SCABARAS_SEQUENCE_FAIL;
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE1:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE2:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE3:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE4:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE5:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE6:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE7:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE8:
+				case ObjectID.TOA_SCABARAS_TOTALTILES_TILE9:
+					return ToaEvent.SCABARAS_NUMBER_FAIL;
+				case ObjectID.TOA_SCABARAS_LIGHTSOUT_TILE_OFF:
+					return null;
+			}
+		}
+
+		// Recognize the number puzzle beside its tablet too. This only identifies the
+		// puzzle; its selected total or a reset must still corroborate any damage.
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				Tile nearby = tileAt(tiles, x + dx, y + dy);
+				if (nearby == null || nearby.getGameObjects() == null)
+				{
+					continue;
+				}
+				for (GameObject object : nearby.getGameObjects())
+				{
+					if (object != null && object.getId() == ObjectID.TOA_SCABARAS_TOTALTILES_TABLET)
+					{
+						return ToaEvent.SCABARAS_NUMBER_FAIL;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private static Tile tileAt(Tile[][] tiles, int x, int y)
+	{
+		return x >= 0 && x < tiles.length && tiles[x] != null && y >= 0 && y < tiles[x].length
+			? tiles[x][y] : null;
 	}
 
 	@Subscribe
@@ -285,6 +475,10 @@ public class BeepDeepPlugin extends Plugin
 		String message = event.getMessage();
 		Player local = client.getLocalPlayer();
 		int region = local == null ? -1 : regionOf(local);
+		if (region == SCABARAS_PUZZLE_REGION)
+		{
+			scabarasPuzzles.chat(Text.removeTags(message));
+		}
 
 		// Het seal struck: start countdown to failure if not completed
 		if (region == HET_PUZZLE_REGION && message.contains(HET_SEAL_STRUCK))

@@ -2,8 +2,11 @@ package com.beepdeep;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import java.util.ArrayList;
+import java.util.List;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.IndexedObjectSet;
 import net.runelite.api.Player;
 import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
@@ -18,8 +21,10 @@ final class PluginEventFixture
 	final Player local = mock(Player.class);
 	final WorldView world = mock(WorldView.class);
 	final SoundManager sounds = mock(SoundManager.class);
+	final List<Player> players = new ArrayList<>();
 	final BeepDeepPlugin plugin = new BeepDeepPlugin();
 
+	@SuppressWarnings("unchecked")
 	PluginEventFixture()
 	{
 		Guice.createInjector(new AbstractModule()
@@ -35,6 +40,11 @@ final class PluginEventFixture
 		when(client.getLocalPlayer()).thenReturn(local);
 		when(client.getTopLevelWorldView()).thenReturn(world);
 		when(client.getWorldView(anyInt())).thenReturn(world);
+		when(local.getWorldView()).thenReturn(world);
+		IndexedObjectSet<Player> visible = mock(IndexedObjectSet.class);
+		players.add(local);
+		when(visible.iterator()).thenAnswer(invocation -> players.iterator());
+		doReturn(visible).when(world).players();
 		when(world.isInstance()).thenReturn(true);
 		LocalPoint location = LocalPoint.fromScene(1, 1, world);
 		when(local.getLocalLocation()).thenReturn(location);

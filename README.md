@@ -9,10 +9,17 @@ every sound slot has its own volume (0–100%).
 ## Events
 
 - Enter / leave puzzle rooms
-- Apmeken issue not fixed
-- Het seal not one-phased
-- Any player slipping on a banana peel in Ba-Ba's boss room
-- Any player hit by an Unstable Orb in Akkha's arena
+- Path of Apmeken
+  - Apmeken issue not fixed
+  - Any player slipping on a banana peel in Ba-Ba's boss room
+- Path of Scabaras
+  - Taking damage from the obelisk's falling rocks
+  - Failing the sequence puzzle or number pressure plate puzzle
+- Path of Crondis
+  - Crocodile stunts the palm's growth
+- Path of Het
+  - Het seal not one-phased
+  - Any player hit by an Unstable Orb in Akkha's arena
 - Vault opens with no rare loot
 - Vault opens with rare loot
 
