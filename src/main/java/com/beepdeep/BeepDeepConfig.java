@@ -428,20 +428,6 @@ public interface BeepDeepConfig extends Config
 		return false;
 	}
 
-	@Range(min = 0, max = 100)
-	@Units(Units.PERCENT)
-	@ConfigItem(
-		keyName = "masterVolume",
-		name = "Master volume",
-		description = "Overall volume for all plugin sounds. Each sound's volume is scaled by this percentage. 0 mutes all sounds.",
-		section = generalSection,
-		position = 2
-	)
-	default int masterVolume()
-	{
-		return 50;
-	}
-
 	@ConfigItem(
 		keyName = "enableRemoteUrls",
 		name = "Allow remote URLs",
@@ -459,13 +445,38 @@ public interface BeepDeepConfig extends Config
 		name = "Enable Party Sync",
 		description = "Plays the same sound slot as party members for synced events.",
 		section = generalSection,
-		position = 1
+		position = 2
 	)
 	default boolean enablePartySync()
 	{
 		return false;
 	}
 
+	@ConfigItem(
+		keyName = "partyLeader",
+		name = "Party Leader",
+		description = "Select if you are the party leader.",
+		section = generalSection,
+		position = 3
+	)
+	default boolean isPartyLeader()
+	{
+		return false;
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(
+		keyName = "masterVolume",
+		name = "Master volume",
+		description = "Overall volume for all plugin sounds. Each sound's volume is scaled by this percentage. 0 mutes all sounds.",
+		section = generalSection,
+		position = 4
+	)
+	default int masterVolume()
+	{
+		return 50;
+	}
 	// ===================== Path of Crondis: Enter =====================
 
 	@ConfigSection(

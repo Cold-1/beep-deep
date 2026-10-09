@@ -266,7 +266,7 @@ public class BeepDeepPlugin extends Plugin
 				{
 					if (local.getWorldLocation().equals(WorldPoint.fromLocal(client, graphicsObject.getLocation())))
 					{
-						soundManager.trigger(ToaEvent.SCABARAS_ROCKFALL);
+						soundManager.trigger(ToaEvent.SCABARAS_ROCKFALL, true);
 					}
 				}
 				scabarasRocks.clear();
@@ -634,7 +634,7 @@ public class BeepDeepPlugin extends Plugin
 			|| CRONDIS_EMPTY_WATERFALL.equals(plainMessage)
 			|| (CRONDIS_EMPTY_WATERFALL + ".").equals(plainMessage)))
 		{
-			soundManager.trigger(ToaEvent.CRONDIS_NO_CONTAINER);
+			soundManager.trigger(ToaEvent.CRONDIS_NO_CONTAINER, true);
 		}
 
 		if (region == SCABARAS_PUZZLE_REGION)
