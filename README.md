@@ -50,22 +50,19 @@ MP3 and OGG are not supported.
 
 ### Remote URLs
 
-Remote URLs are **disabled by default**. When enabled, downloaded sounds are cached on
-disk under `.runelite/plugin-data/beep-deep/cache` so each URL is only fetched once.
-The cache directory is created when a sound is downloaded. Local sound directories
-must be created manually.
+Enable **Allow remote URLs** in **General** to use sound links. It is disabled by default.
 
 > ⚠️ Enabling remote URLs submits your IP address to a 3rd-party server not controlled or
 > verified by RuneLite developers.
 
-## Volume
+## Sharing a sound configuration
 
-Master volume defaults to **50%**, and each individual sound's volume defaults to **100%**.
-Both controls range from 0 to 100%. The playback volume is the individual sound's volume
-multiplied by the master volume: for example, 80% individual volume with 50% master volume
-plays at 40% of the sound's original loudness. This applies to sound IDs, local files, and URLs.
-Sound ID volumes apply whether the game's sound effects are enabled or muted, and the game's
-sound-effect volume setting is preserved.
+With the plugin enabled, go to **General → Open sharing dialog**.
+Use **Copy configuration** to share your setup, or paste a code and click **Import configuration**.
+After importing, close and reopen Beep Deep's settings to refresh them.
 
-Set master volume to 0 to mute all plugin sounds, or set an individual volume to 0 to mute
-that slot. Saved individual volume settings are preserved.
+Sharing includes event toggles, sound assignments, and slot volumes.
+Your master volume and remote URL permission stay unchanged.
+Local sound files are not included and their paths may need updating on another computer.
+
+Invalid or incompatible codes leave your settings unchanged.

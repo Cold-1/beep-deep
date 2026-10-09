@@ -34,6 +34,7 @@ final class PluginEventFixture
 			{
 				bind(Client.class).toInstance(client);
 				bind(SoundManager.class).toInstance(sounds);
+				bind(SoundConfigurationSharing.class).toInstance(mock(SoundConfigurationSharing.class));
 			}
 		}).injectMembers(plugin);
 		when(client.getGameState()).thenReturn(GameState.LOGGED_IN);

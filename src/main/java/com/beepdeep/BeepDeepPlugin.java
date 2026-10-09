@@ -40,6 +40,7 @@ import net.runelite.api.gameval.SpotanimID;
 import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
@@ -87,6 +88,9 @@ public class BeepDeepPlugin extends Plugin
 	@Inject
 	private SoundManager soundManager;
 
+	@Inject
+	private SoundConfigurationSharing soundSharing;
+
 	private int currentRegion = -1;
 	private boolean inRaid;
 	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
@@ -100,12 +104,14 @@ public class BeepDeepPlugin extends Plugin
 	protected void startUp()
 	{
 		soundManager.startUp();
+		soundSharing.startUp();
 		resetState();
 	}
 
 	@Override
 	protected void shutDown()
 	{
+		soundSharing.shutDown();
 		soundManager.shutDown();
 		resetState();
 	}
@@ -124,6 +130,12 @@ public class BeepDeepPlugin extends Plugin
 	BeepDeepConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(BeepDeepConfig.class);
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		soundSharing.onConfigChanged(event);
 	}
 
 	@Subscribe
