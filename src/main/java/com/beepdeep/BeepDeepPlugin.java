@@ -41,6 +41,7 @@ import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.party.WSClient;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
@@ -86,6 +87,9 @@ public class BeepDeepPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private WSClient wsClient;
+
+	@Inject
 	private SoundManager soundManager;
 
 	@Inject
@@ -93,6 +97,9 @@ public class BeepDeepPlugin extends Plugin
 
 	@Inject
 	private SoundPreview soundPreview;
+
+	@Inject
+	private BeepDeepConfig config;
 
 	private int currentRegion = -1;
 	private boolean inRaid;
@@ -109,6 +116,7 @@ public class BeepDeepPlugin extends Plugin
 		soundManager.startUp();
 		soundSharing.startUp();
 		soundPreview.startUp();
+		wsClient.registerMessage(BeepDeepPartyMessage.class);
 		resetState();
 	}
 
@@ -118,6 +126,7 @@ public class BeepDeepPlugin extends Plugin
 		soundPreview.shutDown();
 		soundSharing.shutDown();
 		soundManager.shutDown();
+		wsClient.unregisterMessage(BeepDeepPartyMessage.class);
 		resetState();
 	}
 
@@ -142,6 +151,28 @@ public class BeepDeepPlugin extends Plugin
 	{
 		soundSharing.onConfigChanged(event);
 		soundPreview.onConfigChanged(event);
+	}
+
+	@Subscribe
+	public void onBeepDeepPartyMessage(BeepDeepPartyMessage message)
+	{
+		if (!config.enablePartySync())
+		{
+			return;
+		}
+
+		ToaEvent event;
+		try
+		{
+			event = ToaEvent.valueOf(message.getEvent());
+		}
+		catch (IllegalArgumentException | NullPointerException e)
+		{
+			return;
+		}
+
+		int slotIndex = message.getSlotIndex();
+		soundManager.trigger(event, slotIndex);
 	}
 
 	@Subscribe

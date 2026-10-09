@@ -17,7 +17,7 @@ public class SoundManagerLifecycleTest
 	{
 		RecordingAudio audio = new RecordingAudio();
 		PendingResolver resolver = new PendingResolver();
-		SoundManager manager = new SoundManager(null, audio, resolver, remoteConfig(50));
+		SoundManager manager = new SoundManager(null, null, null, audio, resolver, remoteConfig(50));
 		try
 		{
 			manager.startUp();
@@ -43,7 +43,7 @@ public class SoundManagerLifecycleTest
 	public void mutedSoundDoesNotStartDownload()
 	{
 		PendingResolver resolver = new PendingResolver();
-		SoundManager manager = new SoundManager(null, new RecordingAudio(), resolver, remoteConfig(0));
+		SoundManager manager = new SoundManager(null, null, null, new RecordingAudio(), resolver, remoteConfig(0));
 		try
 		{
 			manager.startUp();
@@ -60,7 +60,7 @@ public class SoundManagerLifecycleTest
 	public void stoppedManagerIgnoresTriggers()
 	{
 		PendingResolver resolver = new PendingResolver();
-		SoundManager manager = new SoundManager(null, new RecordingAudio(), resolver, remoteConfig(50));
+		SoundManager manager = new SoundManager(null, null, null, new RecordingAudio(), resolver, remoteConfig(50));
 		manager.trigger(ToaEvent.CRONDIS_ENTER);
 		assertFalse(resolver.requested.isDone());
 	}

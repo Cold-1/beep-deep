@@ -10,6 +10,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import net.runelite.api.Client;
 import net.runelite.api.Preferences;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.callback.ClientThread;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,13 @@ public class SoundManagerPreviewTest
 	{
 		when(client.getPreferences()).thenReturn(mock(Preferences.class));
 		when(config.masterVolume()).thenReturn(50);
-		manager = new SoundManager(client, audio, resolver, config);
+		ClientThread clientThread = mock(ClientThread.class);
+		doAnswer(invocation ->
+		{
+			((Runnable) invocation.getArgument(0)).run();
+			return null;
+		}).when(clientThread).invoke(any(Runnable.class));
+		manager = new SoundManager(client, clientThread, null, audio, resolver, config);
 		manager.startUp();
 		clearInvocations(resolver);
 	}

@@ -1,7 +1,5 @@
 package com.beepdeep;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -172,7 +170,11 @@ public enum ToaEvent
 		this.displayName = displayName;
 		this.configPrefix = configPrefix;
 		this.enabled = enabled;
-		this.slots = Collections.unmodifiableList(Arrays.asList(slots));
+		for (int i = 0; i < slots.length; i++)
+		{
+			slots[i].index = i;
+		}
+		this.slots = List.of(slots);
 	}
 
 	String getConfigPrefix()
@@ -208,6 +210,7 @@ public enum ToaEvent
 
 	static final class SoundSlot
 	{
+		private int index;
 		private final Function<BeepDeepConfig, String> source;
 		private final ToIntFunction<BeepDeepConfig> volume;
 
@@ -215,6 +218,11 @@ public enum ToaEvent
 		{
 			this.source = source;
 			this.volume = volume;
+		}
+
+		int index()
+		{
+			return index;
 		}
 
 		String source(BeepDeepConfig config)

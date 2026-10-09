@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.runelite.api.Client;
 import net.runelite.api.Preferences;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.callback.ClientThread;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,13 @@ public class SoundEffectPlaybackTest
 		when(config.crondisEnterSound1()).thenReturn("2192");
 		when(config.crondisEnterVolume1()).thenReturn(80);
 		when(config.masterVolume()).thenReturn(50);
-		manager = new SoundManager(client, mock(AudioPlayer.class), mock(SoundFileResolver.class), config);
+		ClientThread clientThread = mock(ClientThread.class);
+		doAnswer(invocation ->
+		{
+			((Runnable) invocation.getArgument(0)).run();
+			return null;
+		}).when(clientThread).invoke(any(Runnable.class));
+		manager = new SoundManager(client, clientThread, null, mock(AudioPlayer.class), mock(SoundFileResolver.class), config);
 		manager.startUp();
 	}
 

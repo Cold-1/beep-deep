@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import net.runelite.api.Client;
 import net.runelite.api.Preferences;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.callback.ClientThread;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
 public class SoundPlaybackTest
 {
 	private Client client;
+	private ClientThread clientThread;
 	private AudioPlayer audio;
 	private SoundFileResolver resolver;
 	private BeepDeepConfig config;
@@ -33,6 +35,12 @@ public class SoundPlaybackTest
 	{
 		client = mock(Client.class);
 		when(client.getPreferences()).thenReturn(mock(Preferences.class));
+		clientThread = mock(ClientThread.class);
+		doAnswer(invocation ->
+		{
+			((Runnable) invocation.getArgument(0)).run();
+			return null;
+		}).when(clientThread).invoke(any(Runnable.class));
 		audio = mock(AudioPlayer.class);
 		resolver = mock(SoundFileResolver.class);
 		config = mock(BeepDeepConfig.class);
@@ -46,7 +54,7 @@ public class SoundPlaybackTest
 		when(config.crondisLeaveVolume1()).thenReturn(100);
 		when(resolver.localFile("sentinel.wav")).thenReturn(sentinel);
 		drained = playbackCompletion(sentinel, Thread.currentThread());
-		manager = new SoundManager(client, audio, resolver, config);
+		manager = new SoundManager(client, clientThread, null, audio, resolver, config);
 		manager.startUp();
 		clearInvocations(resolver);
 	}
@@ -70,6 +78,34 @@ public class SoundPlaybackTest
 		verify(client).playSoundEffect(2192, 102);
 		verifyNoMoreInteractions(ignoreStubs(client));
 		verifyNoInteractions(audio, resolver);
+	}
+
+	@Test
+	public void partySelectedSlotUsesExactSoundAndCombinedVolumeWithoutRebroadcast()
+	{
+		when(config.crondisEnterSound1()).thenReturn("2192");
+		when(config.crondisEnterSound5()).thenReturn("2193");
+		when(config.crondisEnterVolume5()).thenReturn(80);
+		when(config.masterVolume()).thenReturn(50);
+		manager.trigger(ToaEvent.CRONDIS_ENTER, 4);
+		verify(client).playSoundEffect(2193, 51);
+		verifyNoMoreInteractions(ignoreStubs(client));
+		verifyNoInteractions(audio, resolver);
+	}
+
+	@Test
+	public void partySelectedSlotHonorsMuteAndDisabledEventsAndRejectsInvalidIndices()
+	{
+		when(config.crondisEnterSound1()).thenReturn("2192");
+		manager.trigger(ToaEvent.CRONDIS_ENTER, -1);
+		manager.trigger(ToaEvent.CRONDIS_ENTER, 5);
+		manager.trigger(ToaEvent.CRONDIS_ENTER, 4);
+		when(config.masterVolume()).thenReturn(0);
+		manager.trigger(ToaEvent.CRONDIS_ENTER, 0);
+		when(config.masterVolume()).thenReturn(100);
+		when(config.crondisEnterEnabled()).thenReturn(false);
+		manager.trigger(ToaEvent.CRONDIS_ENTER, 0);
+		verifyNoInteractions(client, audio, resolver);
 	}
 
 	@Test

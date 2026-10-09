@@ -12,12 +12,14 @@ import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameTick;
 
+import net.runelite.client.party.WSClient;
 import static org.mockito.Mockito.*;
 
 /** Uses real instance-coordinate conversion, with a single unrotated template chunk. */
 final class PluginEventFixture
 {
 	final Client client = mock(Client.class);
+	final WSClient wsClient = mock(WSClient.class);
 	final Player local = mock(Player.class);
 	final WorldView world = mock(WorldView.class);
 	final SoundManager sounds = mock(SoundManager.class);
@@ -33,6 +35,8 @@ final class PluginEventFixture
 			protected void configure()
 			{
 				bind(Client.class).toInstance(client);
+				bind(WSClient.class).toInstance(wsClient);
+				bind(BeepDeepConfig.class).toInstance(mock(BeepDeepConfig.class));
 				bind(SoundManager.class).toInstance(sounds);
 				bind(SoundConfigurationSharing.class).toInstance(mock(SoundConfigurationSharing.class));
 				bind(SoundPreview.class).toInstance(mock(SoundPreview.class));

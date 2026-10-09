@@ -24,7 +24,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Raid - Enter",
 		description = "Sounds played when you enter the Tombs of Amascut.",
-		position = 21,
+		position = 1,
 		closedByDefault = true
 	)
 	String raidEnterSection = "raidEnterSection";
@@ -110,7 +110,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Raid - Leave",
 		description = "Sounds played when you actually exit the raid, including teleporting out.",
-		position = 22,
+		position = 2,
 		closedByDefault = true
 	)
 	String raidLeaveSection = "raidLeaveSection";
@@ -196,7 +196,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Raid - Failed or Wiped Challenge Room",
 		description = "Sounds played when your party fails a puzzle or boss room challenge.",
-		position = 23,
+		position = 3,
 		closedByDefault = true
 	)
 	String roomFailSection = "roomFailSection";
@@ -282,7 +282,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Raid - Failed or Abandoned Raid",
 		description = "Sounds played when you fail to survive or abandon the raid.",
-		position = 24,
+		position = 4,
 		closedByDefault = true
 	)
 	String raidFailSection = "raidFailSection";
@@ -454,12 +454,24 @@ public interface BeepDeepConfig extends Config
 		return false;
 	}
 
+	@ConfigItem(
+		keyName = "enablePartySync",
+		name = "Enable Party Sync",
+		description = "Plays the same sound slot as party members for synced events.",
+		section = generalSection,
+		position = 1
+	)
+	default boolean enablePartySync()
+	{
+		return false;
+	}
+
 	// ===================== Path of Crondis: Enter =====================
 
 	@ConfigSection(
 		name = "Path of Crondis - Enter",
 		description = "Sounds played when you enter the Path of Crondis room.",
-		position = 1,
+		position = 14,
 		closedByDefault = true
 	)
 	String crondisEnterSection = "crondisEnterSection";
@@ -545,7 +557,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Crondis - Leave",
 		description = "Sounds played when you leave the Crondis puzzle room for Zebak's boss room.",
-		position = 2,
+		position = 15,
 		closedByDefault = true
 	)
 	String crondisLeaveSection = "crondisLeaveSection";
@@ -632,7 +644,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Crondis - Palm Damage",
 		description = "Sounds played when a crocodile damages the Palm of Resourcefulness in the Crondis puzzle room.",
-		position = 3,
+		position = 16,
 		closedByDefault = true
 	)
 	String crocAttackSection = "crocAttackSection";
@@ -718,7 +730,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Crondis - Water Collection Reminder",
 		description = "Sounds played when you try to take water without a container or from an empty waterfall in the Crondis puzzle room.",
-		position = 4,
+		position = 17,
 		closedByDefault = true
 	)
 	String crondisNoContainerSection = "crondisNoContainerSection";
@@ -1492,7 +1504,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Enter",
 		description = "Sounds played when you enter the Path of Het room.",
-		position = 14,
+		position = 18,
 		closedByDefault = true
 	)
 	String hetEnterSection = "hetEnterSection";
@@ -1578,7 +1590,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Leave",
 		description = "Sounds played when you leave the Het puzzle room for Akkha's boss room.",
-		position = 15,
+		position = 19,
 		closedByDefault = true
 	)
 	String hetLeaveSection = "hetLeaveSection";
@@ -1664,7 +1676,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Orb/Light Damage",
 		description = "Sounds played when any player takes damage from light or dark orbs in the Het puzzle room.",
-		position = 16,
+		position = 20,
 		closedByDefault = true
 	)
 	String hetOrbDamageSection = "hetOrbDamageSection";
@@ -1750,7 +1762,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Unstable Orb Hit",
 		description = "Sounds played when any player is hit by an Unstable Orb in Akkha's arena.",
-		position = 18,
+		position = 22,
 		closedByDefault = true
 	)
 	String hetUnstableOrbHitSection = "hetUnstableOrbHitSection";
@@ -1836,7 +1848,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Seal Not One-Phased",
 		description = "Sounds played when the Path of Het seal is not killed in one phase.",
-		position = 17,
+		position = 21,
 		closedByDefault = true
 	)
 	String hetOnePhaseFailSection = "hetOnePhaseFailSection";
@@ -2008,7 +2020,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - No Rare Loot",
 		description = "Sounds played when the ToA vault opens without rare loot.",
-		position = 19,
+		position = 23,
 		closedByDefault = true
 	)
 	String vaultNoRareLootSection = "vaultNoRareLootSection";
@@ -2094,7 +2106,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - Rare Loot",
 		description = "Sounds played when the ToA vault opens with rare loot.",
-		position = 20,
+		position = 24,
 		closedByDefault = true
 	)
 	String vaultRareLootSection = "vaultRareLootSection";
