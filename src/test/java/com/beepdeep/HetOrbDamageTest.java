@@ -169,6 +169,6 @@ public class HetOrbDamageTest
 		HitsplatApplied event = new HitsplatApplied();
 		event.setActor(actor);
 		event.setHitsplat(hit);
-		f.plugin.onHitsplatApplied(event);
+		f.leaderEvents.onHitsplatApplied(event);
 	}
 }

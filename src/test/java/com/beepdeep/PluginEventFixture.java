@@ -12,6 +12,7 @@ import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameTick;
 
+import net.runelite.client.party.PartyService;
 import net.runelite.client.party.WSClient;
 import static org.mockito.Mockito.*;
 
@@ -20,11 +21,13 @@ final class PluginEventFixture
 {
 	final Client client = mock(Client.class);
 	final WSClient wsClient = mock(WSClient.class);
+	final PartyService partyService = mock(PartyService.class);
 	final Player local = mock(Player.class);
 	final WorldView world = mock(WorldView.class);
 	final SoundManager sounds = mock(SoundManager.class);
 	final List<Player> players = new ArrayList<>();
 	final BeepDeepPlugin plugin = new BeepDeepPlugin();
+	final LeaderEvents leaderEvents = new LeaderEvents();
 
 	@SuppressWarnings("unchecked")
 	PluginEventFixture()
@@ -36,12 +39,28 @@ final class PluginEventFixture
 			{
 				bind(Client.class).toInstance(client);
 				bind(WSClient.class).toInstance(wsClient);
+				bind(PartyService.class).toInstance(partyService);
+				bind(BeepDeepConfig.class).toInstance(mock(BeepDeepConfig.class));
+				bind(SoundManager.class).toInstance(sounds);
+				bind(SoundConfigurationSharing.class).toInstance(mock(SoundConfigurationSharing.class));
+				bind(SoundPreview.class).toInstance(mock(SoundPreview.class));
+				bind(LeaderEvents.class).toInstance(leaderEvents);
+			}
+		}).injectMembers(plugin);
+		Guice.createInjector(new AbstractModule()
+		{
+			@Override
+			protected void configure()
+			{
+				bind(Client.class).toInstance(client);
+				bind(WSClient.class).toInstance(wsClient);
+				bind(PartyService.class).toInstance(partyService);
 				bind(BeepDeepConfig.class).toInstance(mock(BeepDeepConfig.class));
 				bind(SoundManager.class).toInstance(sounds);
 				bind(SoundConfigurationSharing.class).toInstance(mock(SoundConfigurationSharing.class));
 				bind(SoundPreview.class).toInstance(mock(SoundPreview.class));
 			}
-		}).injectMembers(plugin);
+		}).injectMembers(leaderEvents);
 		when(client.getGameState()).thenReturn(GameState.LOGGED_IN);
 		when(client.getLocalPlayer()).thenReturn(local);
 		when(client.getTopLevelWorldView()).thenReturn(world);
@@ -68,6 +87,7 @@ final class PluginEventFixture
 		for (int i = 0; i < count; i++)
 		{
 			plugin.onGameTick(new GameTick());
+			leaderEvents.onGameTick(new GameTick());
 		}
 	}
 }

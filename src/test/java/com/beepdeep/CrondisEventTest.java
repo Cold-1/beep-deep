@@ -90,7 +90,7 @@ public class CrondisEventTest
 	{
 		chat(ChatMessageType.GAMEMESSAGE, NO_CONTAINER);
 		chat(ChatMessageType.SPAM, "<col=ff0000>" + NO_CONTAINER + "</col>");
-		verify(f.sounds, times(2)).trigger(ToaEvent.CRONDIS_NO_CONTAINER, true);
+		verify(f.sounds, times(2)).trigger(ToaEvent.CRONDIS_NO_CONTAINER);
 		verifyNoMoreInteractions(f.sounds);
 	}
 
@@ -102,7 +102,7 @@ public class CrondisEventTest
 			chat(type, EMPTY_WATERFALL);
 			chat(type, "<col=ff0000>" + EMPTY_WATERFALL + ".</col>");
 		}
-		verify(f.sounds, times(4)).trigger(ToaEvent.CRONDIS_NO_CONTAINER, true);
+		verify(f.sounds, times(4)).trigger(ToaEvent.CRONDIS_NO_CONTAINER);
 		verifyNoMoreInteractions(f.sounds);
 	}
 
@@ -149,7 +149,7 @@ public class CrondisEventTest
 	{
 		AnimationChanged event = new AnimationChanged();
 		event.setActor(actor);
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 	}
 
 	private void chat(ChatMessageType type, String message)

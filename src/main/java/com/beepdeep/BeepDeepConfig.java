@@ -440,8 +440,10 @@ public interface BeepDeepConfig extends Config
 		return false;
 	}
 
+	String PARTY_SYNC_KEY = "enablePartySync";
+
 	@ConfigItem(
-		keyName = "enablePartySync",
+		keyName = PARTY_SYNC_KEY,
 		name = "Enable Party Sync",
 		description = "Plays the same sound slot as party members for synced events.",
 		section = generalSection,
@@ -452,8 +454,9 @@ public interface BeepDeepConfig extends Config
 		return false;
 	}
 
+	String PARTY_LEADER_KEY = "partyLeader";
 	@ConfigItem(
-		keyName = "partyLeader",
+		keyName = PARTY_LEADER_KEY,
 		name = "Party Leader",
 		description = "Select if you are the party leader.",
 		section = generalSection,

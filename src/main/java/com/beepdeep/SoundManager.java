@@ -89,20 +89,9 @@ class SoundManager
 	 */
 	void trigger(ToaEvent event)
 	{
-		trigger(event, false);
-	}
-
-	void trigger(ToaEvent event, boolean anyMemberCanSend)
-	{
 		if (executor == null || !event.isEnabled(config))
 		{
 			return;
-		}
-
-		boolean synced = config.enablePartySync() && partyService.isInParty();
-		if (synced && !anyMemberCanSend && !config.isPartyLeader())
-		{
-			return; // the leader's message will play this on our client
 		}
 
 		List<ToaEvent.SoundSlot> filled = filledSlots(event);
@@ -112,7 +101,7 @@ class SoundManager
 		}
 
 		int index = filled.get(random.nextInt(filled.size())).index();
-		if (synced)
+		if (config.enablePartySync() && partyService.isInParty())
 		{
 			BeepDeepPartyMessage message = new BeepDeepPartyMessage();
 			message.setEvent(event.name());
