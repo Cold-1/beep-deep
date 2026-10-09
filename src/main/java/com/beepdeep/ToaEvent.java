@@ -110,7 +110,11 @@ enum ToaEvent
 	ToaEvent(Predicate<BeepDeepConfig> enabled, SoundSlot... slots)
 	{
 		this.enabled = enabled;
-		this.slots = Collections.unmodifiableList(Arrays.asList(slots));
+		for (int i = 0; i < slots.length; i++)
+		{
+			slots[i].index = i;
+		}
+		this.slots = List.of(slots);
 	}
 
 	boolean isEnabled(BeepDeepConfig config)
@@ -130,6 +134,7 @@ enum ToaEvent
 
 	static final class SoundSlot
 	{
+		private int index;
 		private final Function<BeepDeepConfig, String> source;
 		private final ToIntFunction<BeepDeepConfig> volume;
 
@@ -137,6 +142,11 @@ enum ToaEvent
 		{
 			this.source = source;
 			this.volume = volume;
+		}
+
+		int index()
+		{
+			return index;
 		}
 
 		String source(BeepDeepConfig config)

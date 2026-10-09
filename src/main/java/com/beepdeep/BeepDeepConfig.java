@@ -41,6 +41,18 @@ public interface BeepDeepConfig extends Config
 		return false;
 	}
 
+	@ConfigItem(
+		keyName = "enablePartySync",
+		name = "Enable Party Sync",
+		description = "Plays the same sound slot as party members for synced events.",
+		section = generalSection,
+		position = 1
+	)
+	default boolean enablePartySync()
+	{
+		return false;
+	}
+
 	// ===================== Path of Crondis: Enter =====================
 
 	@ConfigSection(
