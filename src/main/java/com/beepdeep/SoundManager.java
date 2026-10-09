@@ -1,15 +1,20 @@
 package com.beepdeep;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Preferences;
@@ -30,6 +35,7 @@ import net.runelite.client.audio.AudioPlayer;
 @Slf4j
 class SoundManager
 {
+	private static final Consumer<String> IGNORE_ERROR = message -> {};
 	private final Client client;
 	private final AudioPlayer audioPlayer;
 	private final SoundFileResolver resolver;
@@ -101,15 +107,54 @@ class SoundManager
 		Integer soundId = tryParseSoundId(chosen.source);
 		if (soundId != null)
 		{
-			playEffect(soundId, volume);
+			playEffect(soundId, volume, IGNORE_ERROR);
 			return;
 		}
 
 		// File/URL handling (offload to executor for blocking I/O)
-		submit(session, () -> resolveAndPlayFile(session, chosen.source, volume));
+		submit(session, () -> resolveAndPlayFile(session, chosen.source, volume, IGNORE_ERROR));
 	}
 
-	private void resolveAndPlayFile(ExecutorService session, String source, float volume)
+	/** Plays the exact selected slot, even for disabled events. Call on the client thread. */
+	void preview(ToaEvent event, SoundTestSlot selected, Consumer<String> onError)
+	{
+		ExecutorService session = executor;
+		if (session == null)
+		{
+			return;
+		}
+		ToaEvent.SoundSlot slot = event.getSlots().get(selected.getIndex());
+		String source = normalizeSource(slot.source(config));
+		Consumer<String> report = message ->
+		{
+			if (executor == session)
+			{
+				onError.accept(event.getDisplayName() + " / " + selected + "\n\n" + message);
+			}
+		};
+		if (source.isEmpty())
+		{
+			report.accept("This sound slot is empty. Configure a sound before testing it.");
+			return;
+		}
+		float volume = slot.volume(config) * Math.max(0, Math.min(100, config.masterVolume())) / 100f;
+		Integer soundId = tryParseSoundId(source);
+		if (volume == 0 || (soundId != null && effectVolumeFromPercent(volume) == SoundEffectVolume.MUTED))
+		{
+			report.accept("This sound is muted by its slot volume or master volume. Increase the volume to hear it.");
+			return;
+		}
+		if (soundId != null)
+		{
+			playEffect(soundId, volume, report);
+		}
+		else
+		{
+			submit(session, () -> resolveAndPlayFile(session, source, volume, report));
+		}
+	}
+
+	private void resolveAndPlayFile(ExecutorService session, String source, float volume, Consumer<String> onError)
 	{
 		// Treat as file path or URL
 		if (SoundFileResolver.isRemote(source))
@@ -117,6 +162,7 @@ class SoundManager
 			if (!config.enableRemoteUrls())
 			{
 				log.debug("Beep Deep: remote URLs are disabled, skipping {}", source);
+				onError.accept("Remote URLs are disabled. Enable Allow remote URLs to test this sound.");
 				return;
 			}
 
@@ -125,34 +171,51 @@ class SoundManager
 			{
 				if (config.enableRemoteUrls())
 				{
-					playFile(session, cached, volume);
+					playFile(session, cached, volume, onError);
+				}
+				else
+				{
+					onError.accept("Remote URLs were disabled before playback.");
 				}
 				return;
 			}
 
 			resolver.download(source, () -> executor == session && config.enableRemoteUrls()).thenAccept(file ->
 			{
-				if (file != null)
+				submit(session, () ->
 				{
-					submit(session, () ->
+					if (!config.enableRemoteUrls())
 					{
-						if (config.enableRemoteUrls())
-						{
-							playFile(session, file, volume);
-						}
-					});
-				}
+						onError.accept("Remote URLs were disabled before playback.");
+					}
+					else if (file == null)
+					{
+						onError.accept("Could not download the sound: " + source
+							+ "\nCheck the URL and connection. Downloads must be non-empty and at most 25 MB.");
+					}
+					else
+					{
+						playFile(session, file, volume, onError);
+					}
+				});
 			});
 		}
 		else
 		{
 			try
 			{
-				playFile(session, resolver.localFile(source), volume);
+				playFile(session, resolver.localFile(source), volume, onError);
+			}
+			catch (NoSuchFileException | FileNotFoundException e)
+			{
+				log.debug("Beep Deep: sound file is missing {}: {}", source, e.getMessage());
+				onError.accept("Sound file is missing: " + source
+					+ "\nCheck the path. Relative paths start inside .runelite.");
 			}
 			catch (IOException | IllegalArgumentException e)
 			{
 				log.debug("Beep Deep: could not resolve sound file {}: {}", source, e.getMessage());
+				onError.accept("Could not read sound file: " + source + "\n" + e.getMessage());
 			}
 		}
 	}
@@ -180,7 +243,7 @@ class SoundManager
 		}
 	}
 
-	private void playFile(ExecutorService session, File file, float volume)
+	private void playFile(ExecutorService session, File file, float volume, Consumer<String> onError)
 	{
 		if (volume <= 0 || executor != session || Thread.currentThread().isInterrupted())
 		{
@@ -192,16 +255,33 @@ class SoundManager
 			audioPlayer.play(file, gainForVolume(volume));
 		}
 
+		catch (UnsupportedAudioFileException | IllegalArgumentException e)
+		{
+			log.debug("Beep Deep: unsupported sound file {}: {}", file, e.getMessage());
+			onError.accept("Unsupported sound file: " + file
+				+ "\nUse a supported WAV, AU or AIFF file. MP3 and OGG are not supported.");
+		}
+		catch (FileNotFoundException e)
+		{
+			log.debug("Beep Deep: sound file unavailable {}: {}", file, e.getMessage());
+			onError.accept("Sound file is missing or inaccessible: " + file + "\nCheck the path and permissions.");
+		}
+		catch (LineUnavailableException e)
+		{
+			log.debug("Beep Deep: audio output unavailable: {}", e.getMessage());
+			onError.accept("Audio output is unavailable. Check your audio device and try again.");
+		}
 		catch (Exception e)
 		{
 			log.debug("Beep Deep: could not play sound file {}: {}", file, e.getMessage());
+			onError.accept("Could not play sound file: " + file + "\n" + e.getMessage());
 		}
 	}
 
 	/**
 	 * Plays a RuneScape sound effect by ID.
 	 */
-	private void playEffect(int soundId, float volumePercent)
+	private void playEffect(int soundId, float volumePercent, Consumer<String> onError)
 	{
 		int effectVolume = effectVolumeFromPercent(volumePercent);
 		if (effectVolume == SoundEffectVolume.MUTED)
@@ -234,6 +314,7 @@ class SoundManager
 		catch (RuntimeException e)
 		{
 			log.debug("Beep Deep: failed to play sound effect {}: {}", soundId, e.getMessage());
+			onError.accept("Could not play sound effect " + soundId + ". Try again while logged in.");
 		}
 	}
 

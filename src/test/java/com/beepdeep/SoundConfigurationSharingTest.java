@@ -199,9 +199,11 @@ public class SoundConfigurationSharingTest
 	@Test
 	public void rejectsMalformedAndIncompleteCodesWithoutWritingSettings() throws Exception
 	{
-		String code = SoundConfigurationCodec.encode(new BeepDeepConfig() {}).code;
+		BeepDeepConfig config = new BeepDeepConfig() {};
+		String code = SoundConfigurationCodec.encode(config).code;
 		byte[] payload = payload(code);
-		int toggleIndex = 3 + "raidEnter".length();
+		ToaEvent firstEvent = ToaEvent.values()[0];
+		int toggleIndex = 3 + firstEvent.getConfigPrefix().length();
 		byte[] invalidToggle = payload.clone();
 		invalidToggle[toggleIndex] = 2;
 		byte[] invalidSlots = payload.clone();
@@ -214,7 +216,7 @@ public class SoundConfigurationSharingTest
 		missingEvents[0]--;
 		byte[] invalidSlotVolume = payload.clone();
 		// Two bytes for the first source length followed by the default sound ID.
-		invalidSlotVolume[toggleIndex + 2 + 2 + "2192".length()] = 101;
+		invalidSlotVolume[toggleIndex + 2 + 2 + firstEvent.getSlots().get(0).source(config).length()] = 101;
 		byte[] duplicateEvent = payload.clone();
 		byte[] leaveKey = "raidLeave".getBytes(java.nio.charset.StandardCharsets.UTF_8);
 		for (int i = 3; i < duplicateEvent.length - leaveKey.length; i++)

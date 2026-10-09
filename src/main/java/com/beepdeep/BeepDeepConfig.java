@@ -372,10 +372,54 @@ public interface BeepDeepConfig extends Config
 	)
 	String generalSection = "generalSection";
 
+	@ConfigSection(
+		name = "Test configured sounds",
+		description = "Preview one configured sound at its slot and master volume.",
+		position = 25
+	)
+	String soundTestSection = "soundTestSection";
+
+	@ConfigItem(
+		keyName = "soundTestEvent",
+		name = "Event",
+		description = "Select the event whose sound you want to test, including disabled events.",
+		section = soundTestSection,
+		position = 0
+	)
+	default ToaEvent soundTestEvent()
+	{
+		return ToaEvent.RAID_ENTER;
+	}
+
+	@ConfigItem(
+		keyName = "soundTestSlot",
+		name = "Sound slot",
+		description = "Select the exact sound slot to play.",
+		section = soundTestSection,
+		position = 1
+	)
+	default SoundTestSlot soundTestSlot()
+	{
+		return SoundTestSlot.SOUND_1;
+	}
+
+	@ConfigItem(
+		keyName = "playTestSound",
+		name = "Play sound",
+		description = "Click to play the selected sound using its configured volume and master volume. "
+			+ "This checkbox resets to unchecked.",
+		section = soundTestSection,
+		position = 2
+	)
+	default boolean playTestSound()
+	{
+		return false;
+	}
+
 	@ConfigItem(
 		keyName = "openSoundSharingDialog",
 		name = "Open sharing dialog",
-		description = "Click to open a dialog with Copy and Import buttons. This checkbox resets to unchecked. The plugin must be enabled.",
+		description = "Click to open a dialog with Copy and Import buttons. This checkbox resets to unchecked.",
 		section = generalSection,
 		position = 0
 	)

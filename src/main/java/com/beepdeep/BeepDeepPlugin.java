@@ -91,6 +91,9 @@ public class BeepDeepPlugin extends Plugin
 	@Inject
 	private SoundConfigurationSharing soundSharing;
 
+	@Inject
+	private SoundPreview soundPreview;
+
 	private int currentRegion = -1;
 	private boolean inRaid;
 	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
@@ -105,12 +108,14 @@ public class BeepDeepPlugin extends Plugin
 	{
 		soundManager.startUp();
 		soundSharing.startUp();
+		soundPreview.startUp();
 		resetState();
 	}
 
 	@Override
 	protected void shutDown()
 	{
+		soundPreview.shutDown();
 		soundSharing.shutDown();
 		soundManager.shutDown();
 		resetState();
@@ -136,6 +141,7 @@ public class BeepDeepPlugin extends Plugin
 	public void onConfigChanged(ConfigChanged event)
 	{
 		soundSharing.onConfigChanged(event);
+		soundPreview.onConfigChanged(event);
 	}
 
 	@Subscribe
@@ -360,7 +366,7 @@ public class BeepDeepPlugin extends Plugin
 	@Subscribe
 	public void onGameObjectSpawned(GameObjectSpawned event)
 	{
-		if (inScabaras() && event.getGameObject().getLocalLocation() != null)
+		if (inScabaras())
 		{
 			scabarasPuzzles.spawned(event.getTile(), event.getGameObject(), client.getTickCount());
 		}

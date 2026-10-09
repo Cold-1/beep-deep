@@ -48,6 +48,17 @@ Relative file paths resolve from your RuneLite directory, so `beep-deep/sounds/b
 Only formats supported by Java's built-in audio system are playable: **WAV, AU, and AIFF**.
 MP3 and OGG are not supported.
 
+### Testing a configured sound
+
+With the plugin enabled, open **Test configured sounds**, select an **Event** and
+**Sound slot** (1–5), then click **Play sound**. The checkbox returns to unchecked
+after every click, so you can test the same sound repeatedly.
+
+The selected slot plays at its own volume scaled by **Master volume**, even if
+the event is disabled. A warning identifies the event and slot if the file is
+missing or unsupported, the slot is empty or muted, or a remote sound cannot be
+loaded. Remote previews require **Allow remote URLs**, just like event playback.
+
 ### Remote URLs
 
 Enable **Allow remote URLs** in **General** to use sound links. It is disabled by default.
