@@ -89,11 +89,6 @@ class SoundManager
 	 */
 	void trigger(ToaEvent event)
 	{
-		trigger(event, false);
-	}
-
-	void trigger(ToaEvent event, boolean transmit)
-	{
 		if (executor == null || !event.isEnabled(config))
 		{
 			return;
@@ -106,15 +101,15 @@ class SoundManager
 		}
 
 		int index = filled.get(random.nextInt(filled.size())).index();
-		trigger(event, index);
-
-		if (transmit && partyService.isInParty())
+		if (config.enablePartySync() && partyService.isInParty())
 		{
 			BeepDeepPartyMessage message = new BeepDeepPartyMessage();
 			message.setEvent(event.name());
 			message.setSlotIndex(index);
 			partyService.send(message);
 		}
+
+		trigger(event, index);
 	}
 
 	void trigger(ToaEvent event, int slotIndex)

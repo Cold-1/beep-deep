@@ -149,7 +149,7 @@ public class CrondisEventTest
 	{
 		AnimationChanged event = new AnimationChanged();
 		event.setActor(actor);
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 	}
 
 	private void chat(ChatMessageType type, String message)

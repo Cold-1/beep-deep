@@ -194,11 +194,12 @@ public class RaidEventHandlerTest
 		{
 			enterHet();
 			chat(ChatMessageType.GAMEMESSAGE, SEAL);
-			f.plugin.recordOrbImpact(1, 100);
+			f.leaderEvents.recordOrbImpact(1, 100);
 			GameStateChanged event = new GameStateChanged();
 			event.setGameState(state);
 			f.plugin.onGameStateChanged(event);
-			org.junit.Assert.assertTrue(f.plugin.recordOrbImpact(1, 100));
+			f.leaderEvents.onGameStateChanged(event);
+			org.junit.Assert.assertTrue(f.leaderEvents.recordOrbImpact(1, 100));
 			f.ticks(30);
 			verify(f.sounds).trigger(ToaEvent.HET_ENTER);
 			verifyNoMoreInteractions(f.sounds);
@@ -241,26 +242,26 @@ public class RaidEventHandlerTest
 		when(f.local.getAnimation()).thenReturn(AnimationID.ROYAL_HUMAN_SLIP_FALL);
 		AnimationChanged event = new AnimationChanged();
 		event.setActor(f.local);
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 		net.runelite.api.Player teammate = mock(net.runelite.api.Player.class);
 		net.runelite.api.coords.LocalPoint location = f.local.getLocalLocation();
 		when(teammate.getLocalLocation()).thenReturn(location);
 		when(teammate.getAnimation()).thenReturn(AnimationID.ROYAL_HUMAN_SLIP_FALL);
 		event.setActor(teammate);
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 		verify(f.sounds, times(2)).trigger(ToaEvent.BABA_BANANA_SLIP);
 		clearInvocations(f.sounds);
 		event.setActor(mock(NPC.class));
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 		event.setActor(f.local);
 		f.region(15186);
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 		f.region(15188);
 		when(f.world.isInstance()).thenReturn(false);
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 		when(f.world.isInstance()).thenReturn(true);
 		when(f.local.getLocalLocation()).thenReturn(null);
-		f.plugin.onAnimationChanged(event);
+		f.leaderEvents.onAnimationChanged(event);
 		verifyNoInteractions(f.sounds);
 	}
 
@@ -274,7 +275,7 @@ public class RaidEventHandlerTest
 		graphic(orb(2, 100));
 		graphic(orb(1, 101));
 		verify(f.sounds, times(3)).trigger(ToaEvent.HET_UNSTABLE_ORB_HIT);
-		f.plugin.onNpcDespawned(new NpcDespawned(orb));
+		f.leaderEvents.onNpcDespawned(new NpcDespawned(orb));
 		graphic(orb(1, 101));
 		verify(f.sounds, times(4)).trigger(ToaEvent.HET_UNSTABLE_ORB_HIT);
 		verifyNoMoreInteractions(f.sounds);
@@ -286,7 +287,7 @@ public class RaidEventHandlerTest
 		f.region(14676);
 		GraphicChanged playerGraphic = new GraphicChanged();
 		playerGraphic.setActor(f.local);
-		f.plugin.onGraphicChanged(playerGraphic);
+		f.leaderEvents.onGraphicChanged(playerGraphic);
 		NPC npc = orb(1, 100);
 		when(npc.getId()).thenReturn(-1);
 		graphic(npc);
@@ -337,14 +338,14 @@ public class RaidEventHandlerTest
 		ChatMessage event = new ChatMessage();
 		event.setType(type);
 		event.setMessage(message);
-		f.plugin.onChatMessage(event);
+		f.leaderEvents.onChatMessage(event);
 	}
 
 	private void graphic(NPC npc)
 	{
 		GraphicChanged event = new GraphicChanged();
 		event.setActor(npc);
-		f.plugin.onGraphicChanged(event);
+		f.leaderEvents.onGraphicChanged(event);
 	}
 
 	private NPC orb(int index, int cycle)

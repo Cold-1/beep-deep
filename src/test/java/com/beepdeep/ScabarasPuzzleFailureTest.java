@@ -448,7 +448,7 @@ public class ScabarasPuzzleFailureTest
 		move(teammate, 2, 2);
 		hitsplat(teammate, HitsplatID.DAMAGE_OTHER, 6);
 		f.players.remove(teammate);
-		f.plugin.onPlayerDespawned(new PlayerDespawned(teammate));
+		f.leaderEvents.onPlayerDespawned(new PlayerDespawned(teammate));
 		advance();
 		verifyNoInteractions(f.sounds);
 	}
@@ -619,7 +619,7 @@ public class ScabarasPuzzleFailureTest
 		GameObjectSpawned event = new GameObjectSpawned();
 		event.setTile(tiles[x][y]);
 		event.setGameObject(object);
-		f.plugin.onGameObjectSpawned(event);
+		f.leaderEvents.onGameObjectSpawned(event);
 		return object;
 	}
 
@@ -630,7 +630,7 @@ public class ScabarasPuzzleFailureTest
 		GameObjectDespawned event = new GameObjectDespawned();
 		event.setTile(tiles[point.getSceneX()][point.getSceneY()]);
 		event.setGameObject(object);
-		f.plugin.onGameObjectDespawned(event);
+		f.leaderEvents.onGameObjectDespawned(event);
 	}
 
 	private void move(int x, int y)
@@ -667,7 +667,7 @@ public class ScabarasPuzzleFailureTest
 		HitsplatApplied event = new HitsplatApplied();
 		event.setActor(actor);
 		event.setHitsplat(hit);
-		f.plugin.onHitsplatApplied(event);
+		f.leaderEvents.onHitsplatApplied(event);
 	}
 
 	private void chat(ChatMessageType type, String message)
@@ -675,7 +675,7 @@ public class ScabarasPuzzleFailureTest
 		ChatMessage event = new ChatMessage();
 		event.setType(type);
 		event.setMessage(message);
-		f.plugin.onChatMessage(event);
+		f.leaderEvents.onChatMessage(event);
 	}
 
 	private void advance()

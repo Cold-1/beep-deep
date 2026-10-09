@@ -183,6 +183,6 @@ public class RaidLifecycleEventTest
 		ChatMessage event = new ChatMessage();
 		event.setType(type);
 		event.setMessage(message);
-		f.plugin.onChatMessage(event);
+		f.leaderEvents.onChatMessage(event);
 	}
 }
