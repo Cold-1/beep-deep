@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.callback.ClientThread;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
 public class SoundPlaybackTest
 {
 	private Client client;
+	private ClientThread clientThread;
 	private AudioPlayer audio;
 	private SoundFileResolver resolver;
 	private BeepDeepConfig config;
@@ -30,6 +32,12 @@ public class SoundPlaybackTest
 	public void setUp() throws Exception
 	{
 		client = mock(Client.class);
+		clientThread = mock(ClientThread.class);
+		doAnswer(invocation ->
+		{
+			((Runnable) invocation.getArgument(0)).run();
+			return null;
+		}).when(clientThread).invoke(any(Runnable.class));
 		audio = mock(AudioPlayer.class);
 		resolver = mock(SoundFileResolver.class);
 		config = mock(BeepDeepConfig.class);
@@ -42,7 +50,7 @@ public class SoundPlaybackTest
 		when(config.crondisLeaveVolume1()).thenReturn(100);
 		when(resolver.localFile("sentinel.wav")).thenReturn(sentinel);
 		drained = playbackCompletion(sentinel, Thread.currentThread());
-		manager = new SoundManager(client, audio, resolver, config);
+		manager = new SoundManager(client, clientThread, null, audio, resolver, config);
 		manager.startUp();
 		clearInvocations(resolver);
 	}

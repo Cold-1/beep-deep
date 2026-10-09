@@ -13,6 +13,8 @@ import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.party.PartyService;
 
 /**
  * Selects and plays the sounds configured for a {@link ToaEvent}.
@@ -29,6 +31,8 @@ import net.runelite.client.audio.AudioPlayer;
 class SoundManager
 {
 	private final Client client;
+	private final ClientThread clientThread;
+	private final PartyService partyService;
 	private final AudioPlayer audioPlayer;
 	private final SoundFileResolver resolver;
 	private final BeepDeepConfig config;
@@ -37,9 +41,11 @@ class SoundManager
 	private volatile ExecutorService executor;
 
 	@Inject
-	SoundManager(Client client, AudioPlayer audioPlayer, SoundFileResolver resolver, BeepDeepConfig config)
+	SoundManager(Client client, ClientThread clientThread, PartyService partyService, AudioPlayer audioPlayer, SoundFileResolver resolver, BeepDeepConfig config)
 	{
 		this.client = client;
+		this.clientThread = clientThread;
+		this.partyService = partyService;
 		this.audioPlayer = audioPlayer;
 		this.resolver = resolver;
 		this.config = config;
@@ -75,35 +81,62 @@ class SoundManager
 	 */
 	void trigger(ToaEvent event)
 	{
+		trigger(event, false);
+	}
+
+	void trigger(ToaEvent event, boolean transmit)
+	{
+		if (executor == null || !event.isEnabled(config))
+		{
+			return;
+		}
+
+		List<ToaEvent.SoundSlot> filled = filledSlots(event);
+		if (filled.isEmpty())
+		{
+			return;
+		}
+
+		int index = filled.get(random.nextInt(filled.size())).index();
+		trigger(event, index);
+
+		if (transmit && partyService.isInParty())
+		{
+			BeepDeepPartyMessage message = new BeepDeepPartyMessage();
+			message.setEvent(event.name());
+			message.setSlotIndex(index);
+			partyService.send(message);
+		}
+	}
+
+	void trigger(ToaEvent event, int slotIndex)
+	{
 		ExecutorService session = executor;
-		if (session == null || !event.isEnabled(config))
+		List<ToaEvent.SoundSlot> all = event.getSlots();
+		if (session == null || !event.isEnabled(config) || slotIndex < 0 || slotIndex >= all.size())
 		{
 			return;
 		}
 
-		List<Slot> slots = filledSlots(event);
-		if (slots.isEmpty())
+		ToaEvent.SoundSlot slot = all.get(slotIndex);
+		String source = normalizeSource(slot.source(config));
+		int volume = slot.volume(config);
+		if (source.isEmpty() || volume == 0)
 		{
 			return;
 		}
-
-		Slot chosen = slots.get(random.nextInt(slots.size()));
-		if (chosen.volume == 0)
-		{
-			return;
-		}
-		log.debug("Beep Deep: event {} -> playing '{}' at volume {}", event, chosen.source, chosen.volume);
+		log.debug("Beep Deep: event {} sound {} -> playing '{}' at volume {}", event, slotIndex + 1, source, volume);
 
 		// Try to parse as sound effect ID (must run on client thread)
-		Integer soundId = tryParseSoundId(chosen.source);
+		Integer soundId = tryParseSoundId(source);
 		if (soundId != null)
 		{
-			playEffect(soundId, chosen.volume);
+			playEffect(soundId, volume);
 			return;
 		}
 
 		// File/URL handling (offload to executor for blocking I/O)
-		submit(session, () -> resolveAndPlayFile(session, chosen.source, chosen.volume));
+		submit(session, () -> resolveAndPlayFile(session, source, volume));
 	}
 
 	private void resolveAndPlayFile(ExecutorService session, String source, int volume)
@@ -202,14 +235,17 @@ class SoundManager
 	{
 		int effectVolume = effectVolumeFromPercent(volumePercent);
 		log.debug("Beep Deep: playing sound effect {} at volume {}", soundId, effectVolume);
-		try
+		clientThread.invoke(() ->
 		{
-			client.playSoundEffect(soundId, effectVolume);
-		}
-		catch (RuntimeException e)
-		{
-			log.debug("Beep Deep: failed to play sound effect {}: {}", soundId, e.getMessage());
-		}
+			try
+			{
+				client.playSoundEffect(soundId, effectVolume);
+			}
+			catch (RuntimeException e)
+			{
+				log.debug("Beep Deep: failed to play sound effect {}: {}", soundId, e.getMessage());
+			}
+		});
 	}
 
 	/**
@@ -251,19 +287,17 @@ class SoundManager
 		}
 	}
 
-	private List<Slot> filledSlots(ToaEvent event)
+	private List<ToaEvent.SoundSlot> filledSlots(ToaEvent event)
 	{
-		List<Slot> slots = new ArrayList<>();
+		List<ToaEvent.SoundSlot> filled = new ArrayList<>();
 		for (ToaEvent.SoundSlot slot : event.getSlots())
 		{
-			String source = normalizeSource(slot.source(config));
-			if (source.isEmpty())
+			if (!normalizeSource(slot.source(config)).isEmpty())
 			{
-				continue;
+				filled.add(slot);
 			}
-			slots.add(new Slot(source, slot.volume(config)));
 		}
-		return slots;
+		return filled;
 	}
 
 	/**
@@ -292,17 +326,5 @@ class SoundManager
 			return source.substring(1, source.length() - 1).trim();
 		}
 		return source;
-	}
-
-	private static final class Slot
-	{
-		private final String source;
-		private final int volume;
-
-		private Slot(String source, int volume)
-		{
-			this.source = source;
-			this.volume = volume;
-		}
 	}
 }
