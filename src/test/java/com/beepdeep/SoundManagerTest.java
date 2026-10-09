@@ -41,7 +41,8 @@ public class SoundManagerTest
 	{
 		BeepDeepConfig defaults = new BeepDeepConfig() {};
 		assertEquals("2192", ToaEvent.CRONDIS_ENTER.getSlots().get(0).source(defaults));
-		assertEquals(50, ToaEvent.CRONDIS_ENTER.getSlots().get(0).volume(defaults));
+		assertEquals(50, defaults.masterVolume());
+		assertEquals(100, ToaEvent.CRONDIS_ENTER.getSlots().get(0).volume(defaults));
 		BeepDeepConfig customized = new BeepDeepConfig()
 		{
 			@Override

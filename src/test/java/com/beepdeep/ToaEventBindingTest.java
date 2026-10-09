@@ -141,7 +141,7 @@ public class ToaEventBindingTest
 		assertEquals(defaultSound, event.getSlots().get(0).source(config));
 		for (int i = 0; i < 5; i++)
 		{
-			assertEquals(50, event.getSlots().get(i).volume(config));
+			assertEquals(100, event.getSlots().get(i).volume(config));
 			if (i > 0)
 			{
 				assertEquals("", event.getSlots().get(i).source(config));

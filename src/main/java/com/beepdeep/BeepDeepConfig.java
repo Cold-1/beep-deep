@@ -46,7 +46,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidEnterVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = raidEnterSection, position = 2)
 	default int raidEnterVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidEnterSound2", name = "Sound 2", description = SOUND_DESC, section = raidEnterSection, position = 3)
@@ -60,7 +60,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidEnterVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = raidEnterSection, position = 4)
 	default int raidEnterVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidEnterSound3", name = "Sound 3", description = SOUND_DESC, section = raidEnterSection, position = 5)
@@ -74,7 +74,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidEnterVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = raidEnterSection, position = 6)
 	default int raidEnterVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidEnterSound4", name = "Sound 4", description = SOUND_DESC, section = raidEnterSection, position = 7)
@@ -88,7 +88,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidEnterVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = raidEnterSection, position = 8)
 	default int raidEnterVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidEnterSound5", name = "Sound 5", description = SOUND_DESC, section = raidEnterSection, position = 9)
@@ -102,7 +102,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidEnterVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = raidEnterSection, position = 10)
 	default int raidEnterVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Raid - Leave =====================
@@ -132,7 +132,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidLeaveVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = raidLeaveSection, position = 2)
 	default int raidLeaveVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidLeaveSound2", name = "Sound 2", description = SOUND_DESC, section = raidLeaveSection, position = 3)
@@ -146,7 +146,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidLeaveVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = raidLeaveSection, position = 4)
 	default int raidLeaveVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidLeaveSound3", name = "Sound 3", description = SOUND_DESC, section = raidLeaveSection, position = 5)
@@ -160,7 +160,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidLeaveVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = raidLeaveSection, position = 6)
 	default int raidLeaveVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidLeaveSound4", name = "Sound 4", description = SOUND_DESC, section = raidLeaveSection, position = 7)
@@ -174,7 +174,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidLeaveVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = raidLeaveSection, position = 8)
 	default int raidLeaveVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidLeaveSound5", name = "Sound 5", description = SOUND_DESC, section = raidLeaveSection, position = 9)
@@ -188,7 +188,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidLeaveVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = raidLeaveSection, position = 10)
 	default int raidLeaveVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Raid - Failed or Wiped Challenge Room =====================
@@ -218,7 +218,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "roomFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = roomFailSection, position = 2)
 	default int roomFailVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "roomFailSound2", name = "Sound 2", description = SOUND_DESC, section = roomFailSection, position = 3)
@@ -232,7 +232,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "roomFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = roomFailSection, position = 4)
 	default int roomFailVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "roomFailSound3", name = "Sound 3", description = SOUND_DESC, section = roomFailSection, position = 5)
@@ -246,7 +246,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "roomFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = roomFailSection, position = 6)
 	default int roomFailVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "roomFailSound4", name = "Sound 4", description = SOUND_DESC, section = roomFailSection, position = 7)
@@ -260,7 +260,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "roomFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = roomFailSection, position = 8)
 	default int roomFailVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "roomFailSound5", name = "Sound 5", description = SOUND_DESC, section = roomFailSection, position = 9)
@@ -274,7 +274,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "roomFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = roomFailSection, position = 10)
 	default int roomFailVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Raid - Failed or Abandoned Raid =====================
@@ -304,7 +304,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = raidFailSection, position = 2)
 	default int raidFailVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidFailSound2", name = "Sound 2", description = SOUND_DESC, section = raidFailSection, position = 3)
@@ -318,7 +318,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = raidFailSection, position = 4)
 	default int raidFailVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidFailSound3", name = "Sound 3", description = SOUND_DESC, section = raidFailSection, position = 5)
@@ -332,7 +332,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = raidFailSection, position = 6)
 	default int raidFailVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidFailSound4", name = "Sound 4", description = SOUND_DESC, section = raidFailSection, position = 7)
@@ -346,7 +346,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = raidFailSection, position = 8)
 	default int raidFailVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "raidFailSound5", name = "Sound 5", description = SOUND_DESC, section = raidFailSection, position = 9)
@@ -360,7 +360,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "raidFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = raidFailSection, position = 10)
 	default int raidFailVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== General =====================
@@ -371,6 +371,20 @@ public interface BeepDeepConfig extends Config
 		position = 0
 	)
 	String generalSection = "generalSection";
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(
+		keyName = "masterVolume",
+		name = "Master volume",
+		description = "Overall volume for all plugin sounds. Each sound's volume is scaled by this percentage. 0 mutes all sounds.",
+		section = generalSection,
+		position = 1
+	)
+	default int masterVolume()
+	{
+		return 50;
+	}
 
 	@ConfigItem(
 		keyName = "enableRemoteUrls",
@@ -412,7 +426,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisEnterVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = crondisEnterSection, position = 2)
 	default int crondisEnterVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisEnterSound2", name = "Sound 2", description = SOUND_DESC, section = crondisEnterSection, position = 3)
@@ -426,7 +440,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisEnterVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = crondisEnterSection, position = 4)
 	default int crondisEnterVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisEnterSound3", name = "Sound 3", description = SOUND_DESC, section = crondisEnterSection, position = 5)
@@ -440,7 +454,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisEnterVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = crondisEnterSection, position = 6)
 	default int crondisEnterVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisEnterSound4", name = "Sound 4", description = SOUND_DESC, section = crondisEnterSection, position = 7)
@@ -454,7 +468,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisEnterVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = crondisEnterSection, position = 8)
 	default int crondisEnterVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisEnterSound5", name = "Sound 5", description = SOUND_DESC, section = crondisEnterSection, position = 9)
@@ -468,7 +482,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisEnterVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = crondisEnterSection, position = 10)
 	default int crondisEnterVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Crondis: Leave =====================
@@ -498,7 +512,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisLeaveVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = crondisLeaveSection, position = 2)
 	default int crondisLeaveVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisLeaveSound2", name = "Sound 2", description = SOUND_DESC, section = crondisLeaveSection, position = 3)
@@ -512,7 +526,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisLeaveVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = crondisLeaveSection, position = 4)
 	default int crondisLeaveVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisLeaveSound3", name = "Sound 3", description = SOUND_DESC, section = crondisLeaveSection, position = 5)
@@ -526,7 +540,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisLeaveVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = crondisLeaveSection, position = 6)
 	default int crondisLeaveVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisLeaveSound4", name = "Sound 4", description = SOUND_DESC, section = crondisLeaveSection, position = 7)
@@ -540,7 +554,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisLeaveVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = crondisLeaveSection, position = 8)
 	default int crondisLeaveVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisLeaveSound5", name = "Sound 5", description = SOUND_DESC, section = crondisLeaveSection, position = 9)
@@ -554,7 +568,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisLeaveVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = crondisLeaveSection, position = 10)
 	default int crondisLeaveVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Crondis: Palm Damage =====================
@@ -585,7 +599,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crocAttackVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = crocAttackSection, position = 2)
 	default int crocAttackVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crocAttackSound2", name = "Sound 2", description = SOUND_DESC, section = crocAttackSection, position = 3)
@@ -599,7 +613,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crocAttackVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = crocAttackSection, position = 4)
 	default int crocAttackVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crocAttackSound3", name = "Sound 3", description = SOUND_DESC, section = crocAttackSection, position = 5)
@@ -613,7 +627,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crocAttackVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = crocAttackSection, position = 6)
 	default int crocAttackVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crocAttackSound4", name = "Sound 4", description = SOUND_DESC, section = crocAttackSection, position = 7)
@@ -627,7 +641,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crocAttackVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = crocAttackSection, position = 8)
 	default int crocAttackVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crocAttackSound5", name = "Sound 5", description = SOUND_DESC, section = crocAttackSection, position = 9)
@@ -641,7 +655,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crocAttackVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = crocAttackSection, position = 10)
 	default int crocAttackVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Crondis: Water Collection Reminder =====================
@@ -671,7 +685,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisNoContainerVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = crondisNoContainerSection, position = 2)
 	default int crondisNoContainerVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisNoContainerSound2", name = "Sound 2", description = SOUND_DESC, section = crondisNoContainerSection, position = 3)
@@ -685,7 +699,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisNoContainerVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = crondisNoContainerSection, position = 4)
 	default int crondisNoContainerVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisNoContainerSound3", name = "Sound 3", description = SOUND_DESC, section = crondisNoContainerSection, position = 5)
@@ -699,7 +713,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisNoContainerVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = crondisNoContainerSection, position = 6)
 	default int crondisNoContainerVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisNoContainerSound4", name = "Sound 4", description = SOUND_DESC, section = crondisNoContainerSection, position = 7)
@@ -713,7 +727,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisNoContainerVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = crondisNoContainerSection, position = 8)
 	default int crondisNoContainerVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "crondisNoContainerSound5", name = "Sound 5", description = SOUND_DESC, section = crondisNoContainerSection, position = 9)
@@ -727,7 +741,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "crondisNoContainerVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = crondisNoContainerSection, position = 10)
 	default int crondisNoContainerVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Apmeken: Enter =====================
@@ -757,7 +771,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenEnterVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = apmekenEnterSection, position = 2)
 	default int apmekenEnterVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenEnterSound2", name = "Sound 2", description = SOUND_DESC, section = apmekenEnterSection, position = 3)
@@ -771,7 +785,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenEnterVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = apmekenEnterSection, position = 4)
 	default int apmekenEnterVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenEnterSound3", name = "Sound 3", description = SOUND_DESC, section = apmekenEnterSection, position = 5)
@@ -785,7 +799,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenEnterVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = apmekenEnterSection, position = 6)
 	default int apmekenEnterVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenEnterSound4", name = "Sound 4", description = SOUND_DESC, section = apmekenEnterSection, position = 7)
@@ -799,7 +813,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenEnterVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = apmekenEnterSection, position = 8)
 	default int apmekenEnterVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenEnterSound5", name = "Sound 5", description = SOUND_DESC, section = apmekenEnterSection, position = 9)
@@ -813,7 +827,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenEnterVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = apmekenEnterSection, position = 10)
 	default int apmekenEnterVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Apmeken: Leave =====================
@@ -843,7 +857,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenLeaveVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = apmekenLeaveSection, position = 2)
 	default int apmekenLeaveVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenLeaveSound2", name = "Sound 2", description = SOUND_DESC, section = apmekenLeaveSection, position = 3)
@@ -857,7 +871,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenLeaveVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = apmekenLeaveSection, position = 4)
 	default int apmekenLeaveVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenLeaveSound3", name = "Sound 3", description = SOUND_DESC, section = apmekenLeaveSection, position = 5)
@@ -871,7 +885,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenLeaveVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = apmekenLeaveSection, position = 6)
 	default int apmekenLeaveVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenLeaveSound4", name = "Sound 4", description = SOUND_DESC, section = apmekenLeaveSection, position = 7)
@@ -885,7 +899,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenLeaveVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = apmekenLeaveSection, position = 8)
 	default int apmekenLeaveVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenLeaveSound5", name = "Sound 5", description = SOUND_DESC, section = apmekenLeaveSection, position = 9)
@@ -899,7 +913,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenLeaveVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = apmekenLeaveSection, position = 10)
 	default int apmekenLeaveVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Apmeken: Banana Slip =====================
@@ -929,7 +943,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "babaBananaSlipVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = babaBananaSlipSection, position = 2)
 	default int babaBananaSlipVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "babaBananaSlipSound2", name = "Sound 2", description = SOUND_DESC, section = babaBananaSlipSection, position = 3)
@@ -943,7 +957,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "babaBananaSlipVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = babaBananaSlipSection, position = 4)
 	default int babaBananaSlipVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "babaBananaSlipSound3", name = "Sound 3", description = SOUND_DESC, section = babaBananaSlipSection, position = 5)
@@ -957,7 +971,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "babaBananaSlipVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = babaBananaSlipSection, position = 6)
 	default int babaBananaSlipVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "babaBananaSlipSound4", name = "Sound 4", description = SOUND_DESC, section = babaBananaSlipSection, position = 7)
@@ -971,7 +985,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "babaBananaSlipVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = babaBananaSlipSection, position = 8)
 	default int babaBananaSlipVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "babaBananaSlipSound5", name = "Sound 5", description = SOUND_DESC, section = babaBananaSlipSection, position = 9)
@@ -985,7 +999,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "babaBananaSlipVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = babaBananaSlipSection, position = 10)
 	default int babaBananaSlipVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Scabaras: Enter =====================
@@ -1015,7 +1029,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasEnterVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasEnterSection, position = 2)
 	default int scabarasEnterVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasEnterSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasEnterSection, position = 3)
@@ -1029,7 +1043,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasEnterVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasEnterSection, position = 4)
 	default int scabarasEnterVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasEnterSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasEnterSection, position = 5)
@@ -1043,7 +1057,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasEnterVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasEnterSection, position = 6)
 	default int scabarasEnterVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasEnterSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasEnterSection, position = 7)
@@ -1057,7 +1071,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasEnterVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasEnterSection, position = 8)
 	default int scabarasEnterVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasEnterSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasEnterSection, position = 9)
@@ -1071,7 +1085,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasEnterVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasEnterSection, position = 10)
 	default int scabarasEnterVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Scabaras: Leave =====================
@@ -1101,7 +1115,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasLeaveVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasLeaveSection, position = 2)
 	default int scabarasLeaveVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasLeaveSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasLeaveSection, position = 3)
@@ -1115,7 +1129,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasLeaveVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasLeaveSection, position = 4)
 	default int scabarasLeaveVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasLeaveSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasLeaveSection, position = 5)
@@ -1129,7 +1143,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasLeaveVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasLeaveSection, position = 6)
 	default int scabarasLeaveVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasLeaveSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasLeaveSection, position = 7)
@@ -1143,7 +1157,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasLeaveVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasLeaveSection, position = 8)
 	default int scabarasLeaveVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasLeaveSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasLeaveSection, position = 9)
@@ -1157,7 +1171,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasLeaveVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasLeaveSection, position = 10)
 	default int scabarasLeaveVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Scabaras: Obelisks Rockfall =====================
@@ -1187,7 +1201,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasRockfallVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasRockfallSection, position = 2)
 	default int scabarasRockfallVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasRockfallSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasRockfallSection, position = 3)
@@ -1201,7 +1215,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasRockfallVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasRockfallSection, position = 4)
 	default int scabarasRockfallVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasRockfallSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasRockfallSection, position = 5)
@@ -1215,7 +1229,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasRockfallVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasRockfallSection, position = 6)
 	default int scabarasRockfallVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasRockfallSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasRockfallSection, position = 7)
@@ -1229,7 +1243,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasRockfallVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasRockfallSection, position = 8)
 	default int scabarasRockfallVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasRockfallSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasRockfallSection, position = 9)
@@ -1243,7 +1257,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasRockfallVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasRockfallSection, position = 10)
 	default int scabarasRockfallVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Scabaras: Sequence Failure =====================
@@ -1273,7 +1287,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasSequenceFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasSequenceFailSection, position = 2)
 	default int scabarasSequenceFailVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasSequenceFailSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 3)
@@ -1287,7 +1301,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasSequenceFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasSequenceFailSection, position = 4)
 	default int scabarasSequenceFailVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasSequenceFailSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 5)
@@ -1301,7 +1315,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasSequenceFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasSequenceFailSection, position = 6)
 	default int scabarasSequenceFailVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasSequenceFailSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 7)
@@ -1315,7 +1329,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasSequenceFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasSequenceFailSection, position = 8)
 	default int scabarasSequenceFailVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasSequenceFailSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasSequenceFailSection, position = 9)
@@ -1329,7 +1343,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasSequenceFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasSequenceFailSection, position = 10)
 	default int scabarasSequenceFailVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Scabaras: Number Puzzle Failure =====================
@@ -1359,7 +1373,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasNumberFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = scabarasNumberFailSection, position = 2)
 	default int scabarasNumberFailVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasNumberFailSound2", name = "Sound 2", description = SOUND_DESC, section = scabarasNumberFailSection, position = 3)
@@ -1373,7 +1387,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasNumberFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = scabarasNumberFailSection, position = 4)
 	default int scabarasNumberFailVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasNumberFailSound3", name = "Sound 3", description = SOUND_DESC, section = scabarasNumberFailSection, position = 5)
@@ -1387,7 +1401,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasNumberFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = scabarasNumberFailSection, position = 6)
 	default int scabarasNumberFailVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasNumberFailSound4", name = "Sound 4", description = SOUND_DESC, section = scabarasNumberFailSection, position = 7)
@@ -1401,7 +1415,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasNumberFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = scabarasNumberFailSection, position = 8)
 	default int scabarasNumberFailVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "scabarasNumberFailSound5", name = "Sound 5", description = SOUND_DESC, section = scabarasNumberFailSection, position = 9)
@@ -1415,7 +1429,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "scabarasNumberFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = scabarasNumberFailSection, position = 10)
 	default int scabarasNumberFailVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Het: Enter =====================
@@ -1445,7 +1459,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetEnterVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = hetEnterSection, position = 2)
 	default int hetEnterVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetEnterSound2", name = "Sound 2", description = SOUND_DESC, section = hetEnterSection, position = 3)
@@ -1459,7 +1473,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetEnterVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = hetEnterSection, position = 4)
 	default int hetEnterVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetEnterSound3", name = "Sound 3", description = SOUND_DESC, section = hetEnterSection, position = 5)
@@ -1473,7 +1487,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetEnterVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = hetEnterSection, position = 6)
 	default int hetEnterVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetEnterSound4", name = "Sound 4", description = SOUND_DESC, section = hetEnterSection, position = 7)
@@ -1487,7 +1501,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetEnterVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = hetEnterSection, position = 8)
 	default int hetEnterVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetEnterSound5", name = "Sound 5", description = SOUND_DESC, section = hetEnterSection, position = 9)
@@ -1501,7 +1515,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetEnterVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = hetEnterSection, position = 10)
 	default int hetEnterVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Het: Leave =====================
@@ -1531,7 +1545,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetLeaveVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = hetLeaveSection, position = 2)
 	default int hetLeaveVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetLeaveSound2", name = "Sound 2", description = SOUND_DESC, section = hetLeaveSection, position = 3)
@@ -1545,7 +1559,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetLeaveVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = hetLeaveSection, position = 4)
 	default int hetLeaveVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetLeaveSound3", name = "Sound 3", description = SOUND_DESC, section = hetLeaveSection, position = 5)
@@ -1559,7 +1573,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetLeaveVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = hetLeaveSection, position = 6)
 	default int hetLeaveVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetLeaveSound4", name = "Sound 4", description = SOUND_DESC, section = hetLeaveSection, position = 7)
@@ -1573,7 +1587,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetLeaveVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = hetLeaveSection, position = 8)
 	default int hetLeaveVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetLeaveSound5", name = "Sound 5", description = SOUND_DESC, section = hetLeaveSection, position = 9)
@@ -1587,7 +1601,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetLeaveVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = hetLeaveSection, position = 10)
 	default int hetLeaveVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Het: Orb/Light Damage =====================
@@ -1617,7 +1631,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOrbDamageVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = hetOrbDamageSection, position = 2)
 	default int hetOrbDamageVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOrbDamageSound2", name = "Sound 2", description = SOUND_DESC, section = hetOrbDamageSection, position = 3)
@@ -1631,7 +1645,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOrbDamageVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = hetOrbDamageSection, position = 4)
 	default int hetOrbDamageVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOrbDamageSound3", name = "Sound 3", description = SOUND_DESC, section = hetOrbDamageSection, position = 5)
@@ -1645,7 +1659,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOrbDamageVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = hetOrbDamageSection, position = 6)
 	default int hetOrbDamageVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOrbDamageSound4", name = "Sound 4", description = SOUND_DESC, section = hetOrbDamageSection, position = 7)
@@ -1659,7 +1673,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOrbDamageVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = hetOrbDamageSection, position = 8)
 	default int hetOrbDamageVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOrbDamageSound5", name = "Sound 5", description = SOUND_DESC, section = hetOrbDamageSection, position = 9)
@@ -1673,7 +1687,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOrbDamageVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = hetOrbDamageSection, position = 10)
 	default int hetOrbDamageVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Het: Unstable Orb Hit =====================
@@ -1703,7 +1717,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetUnstableOrbHitVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = hetUnstableOrbHitSection, position = 2)
 	default int hetUnstableOrbHitVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetUnstableOrbHitSound2", name = "Sound 2", description = SOUND_DESC, section = hetUnstableOrbHitSection, position = 3)
@@ -1717,7 +1731,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetUnstableOrbHitVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = hetUnstableOrbHitSection, position = 4)
 	default int hetUnstableOrbHitVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetUnstableOrbHitSound3", name = "Sound 3", description = SOUND_DESC, section = hetUnstableOrbHitSection, position = 5)
@@ -1731,7 +1745,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetUnstableOrbHitVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = hetUnstableOrbHitSection, position = 6)
 	default int hetUnstableOrbHitVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetUnstableOrbHitSound4", name = "Sound 4", description = SOUND_DESC, section = hetUnstableOrbHitSection, position = 7)
@@ -1745,7 +1759,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetUnstableOrbHitVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = hetUnstableOrbHitSection, position = 8)
 	default int hetUnstableOrbHitVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetUnstableOrbHitSound5", name = "Sound 5", description = SOUND_DESC, section = hetUnstableOrbHitSection, position = 9)
@@ -1759,7 +1773,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetUnstableOrbHitVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = hetUnstableOrbHitSection, position = 10)
 	default int hetUnstableOrbHitVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Het: Seal Not One-Phased =====================
@@ -1789,7 +1803,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOnePhaseFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = hetOnePhaseFailSection, position = 2)
 	default int hetOnePhaseFailVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOnePhaseFailSound2", name = "Sound 2", description = SOUND_DESC, section = hetOnePhaseFailSection, position = 3)
@@ -1803,7 +1817,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOnePhaseFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = hetOnePhaseFailSection, position = 4)
 	default int hetOnePhaseFailVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOnePhaseFailSound3", name = "Sound 3", description = SOUND_DESC, section = hetOnePhaseFailSection, position = 5)
@@ -1817,7 +1831,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOnePhaseFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = hetOnePhaseFailSection, position = 6)
 	default int hetOnePhaseFailVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOnePhaseFailSound4", name = "Sound 4", description = SOUND_DESC, section = hetOnePhaseFailSection, position = 7)
@@ -1831,7 +1845,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOnePhaseFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = hetOnePhaseFailSection, position = 8)
 	default int hetOnePhaseFailVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "hetOnePhaseFailSound5", name = "Sound 5", description = SOUND_DESC, section = hetOnePhaseFailSection, position = 9)
@@ -1845,7 +1859,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "hetOnePhaseFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = hetOnePhaseFailSection, position = 10)
 	default int hetOnePhaseFailVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Path of Apmeken: Issue Not Fixed =====================
@@ -1875,7 +1889,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = apmekenFailSection, position = 2)
 	default int apmekenFailVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenFailSound2", name = "Sound 2", description = SOUND_DESC, section = apmekenFailSection, position = 3)
@@ -1889,7 +1903,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = apmekenFailSection, position = 4)
 	default int apmekenFailVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenFailSound3", name = "Sound 3", description = SOUND_DESC, section = apmekenFailSection, position = 5)
@@ -1903,7 +1917,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = apmekenFailSection, position = 6)
 	default int apmekenFailVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenFailSound4", name = "Sound 4", description = SOUND_DESC, section = apmekenFailSection, position = 7)
@@ -1917,7 +1931,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = apmekenFailSection, position = 8)
 	default int apmekenFailVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "apmekenFailSound5", name = "Sound 5", description = SOUND_DESC, section = apmekenFailSection, position = 9)
@@ -1931,7 +1945,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "apmekenFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = apmekenFailSection, position = 10)
 	default int apmekenFailVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Vault: Loot Room - No Rare Loot =====================
@@ -1961,7 +1975,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultNoRareLootVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = vaultNoRareLootSection, position = 2)
 	default int vaultNoRareLootVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultNoRareLootSound2", name = "Sound 2", description = SOUND_DESC, section = vaultNoRareLootSection, position = 3)
@@ -1975,7 +1989,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultNoRareLootVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = vaultNoRareLootSection, position = 4)
 	default int vaultNoRareLootVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultNoRareLootSound3", name = "Sound 3", description = SOUND_DESC, section = vaultNoRareLootSection, position = 5)
@@ -1989,7 +2003,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultNoRareLootVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = vaultNoRareLootSection, position = 6)
 	default int vaultNoRareLootVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultNoRareLootSound4", name = "Sound 4", description = SOUND_DESC, section = vaultNoRareLootSection, position = 7)
@@ -2003,7 +2017,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultNoRareLootVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = vaultNoRareLootSection, position = 8)
 	default int vaultNoRareLootVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultNoRareLootSound5", name = "Sound 5", description = SOUND_DESC, section = vaultNoRareLootSection, position = 9)
@@ -2017,7 +2031,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultNoRareLootVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = vaultNoRareLootSection, position = 10)
 	default int vaultNoRareLootVolume5()
 	{
-		return 50;
+		return 100;
 	}
 
 	// ===================== Vault: Loot Room - Rare Loot =====================
@@ -2047,7 +2061,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultRareLootVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = vaultRareLootSection, position = 2)
 	default int vaultRareLootVolume1()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultRareLootSound2", name = "Sound 2", description = SOUND_DESC, section = vaultRareLootSection, position = 3)
@@ -2061,7 +2075,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultRareLootVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = vaultRareLootSection, position = 4)
 	default int vaultRareLootVolume2()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultRareLootSound3", name = "Sound 3", description = SOUND_DESC, section = vaultRareLootSection, position = 5)
@@ -2075,7 +2089,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultRareLootVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = vaultRareLootSection, position = 6)
 	default int vaultRareLootVolume3()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultRareLootSound4", name = "Sound 4", description = SOUND_DESC, section = vaultRareLootSection, position = 7)
@@ -2089,7 +2103,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultRareLootVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = vaultRareLootSection, position = 8)
 	default int vaultRareLootVolume4()
 	{
-		return 50;
+		return 100;
 	}
 
 	@ConfigItem(keyName = "vaultRareLootSound5", name = "Sound 5", description = SOUND_DESC, section = vaultRareLootSection, position = 9)
@@ -2103,6 +2117,6 @@ public interface BeepDeepConfig extends Config
 	@ConfigItem(keyName = "vaultRareLootVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = vaultRareLootSection, position = 10)
 	default int vaultRareLootVolume5()
 	{
-		return 50;
+		return 100;
 	}
 }

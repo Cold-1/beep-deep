@@ -8,10 +8,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import net.runelite.api.Client;
+import net.runelite.api.Preferences;
 import net.runelite.client.audio.AudioPlayer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -30,9 +32,11 @@ public class SoundPlaybackTest
 	public void setUp() throws Exception
 	{
 		client = mock(Client.class);
+		when(client.getPreferences()).thenReturn(mock(Preferences.class));
 		audio = mock(AudioPlayer.class);
 		resolver = mock(SoundFileResolver.class);
 		config = mock(BeepDeepConfig.class);
+		when(config.masterVolume()).thenReturn(100);
 		when(config.crondisEnterEnabled()).thenReturn(true);
 		when(config.crondisEnterVolume1()).thenReturn(50);
 		when(config.enableRemoteUrls()).thenAnswer(invocation -> remoteEnabled.get());
@@ -54,6 +58,61 @@ public class SoundPlaybackTest
 	}
 
 	@Test
+	public void masterVolumeScalesSoundEffectsAndChangesApplyOnNextTrigger()
+	{
+		when(config.crondisEnterSound1()).thenReturn("2192");
+		when(config.crondisEnterVolume1()).thenReturn(80);
+		when(config.masterVolume()).thenReturn(50);
+		manager.trigger(ToaEvent.CRONDIS_ENTER);
+		verify(client).playSoundEffect(2192, 51);
+		when(config.masterVolume()).thenReturn(100);
+		manager.trigger(ToaEvent.CRONDIS_ENTER);
+		verify(client).playSoundEffect(2192, 102);
+		verifyNoMoreInteractions(ignoreStubs(client));
+		verifyNoInteractions(audio, resolver);
+	}
+
+	@Test
+	public void masterMuteSkipsSoundEffectsLocalFilesAndRemoteUrls()
+	{
+		when(config.masterVolume()).thenReturn(0);
+		remoteEnabled.set(true);
+		for (String source : new String[]{"2192", "sound.wav", "https://example.com/sound.wav"})
+		{
+			when(config.crondisEnterSound1()).thenReturn(source);
+			manager.trigger(ToaEvent.CRONDIS_ENTER);
+		}
+		verifyNoInteractions(client, audio, resolver);
+	}
+
+	@Test
+	public void masterVolumeClampsOutOfRangeSettings()
+	{
+		when(config.crondisEnterSound1()).thenReturn("2192");
+		when(config.masterVolume()).thenReturn(-5);
+		manager.trigger(ToaEvent.CRONDIS_ENTER);
+		verifyNoInteractions(client, audio, resolver);
+		when(config.masterVolume()).thenReturn(200);
+		manager.trigger(ToaEvent.CRONDIS_ENTER);
+		verify(client).playSoundEffect(2192, 64);
+		verifyNoMoreInteractions(ignoreStubs(client));
+	}
+
+	@Test
+	public void fractionalCombinedVolumeStillPlaysLocalFiles() throws Exception
+	{
+		when(config.masterVolume()).thenReturn(50);
+		when(config.crondisEnterVolume1()).thenReturn(1);
+		when(config.crondisEnterSound1()).thenReturn("quiet.wav");
+		File file = new File("quiet.wav");
+		when(resolver.localFile("quiet.wav")).thenReturn(file);
+		CompletableFuture<Void> played = playbackCompletion(file, Thread.currentThread());
+		manager.trigger(ToaEvent.CRONDIS_ENTER);
+		played.get(2, TimeUnit.SECONDS);
+		verify(audio).play(eq(file), floatThat(gain -> Math.abs(gain + 46.0206f) < 0.001f));
+	}
+
+	@Test
 	public void hetOrbDamageUsesConfiguredSoundAndHonorsToggleAndVolume()
 	{
 		when(config.hetOrbDamageSound1()).thenReturn("1234");
@@ -65,7 +124,7 @@ public class SoundPlaybackTest
 		verify(client).playSoundEffect(1234, SoundManager.effectVolumeFromPercent(75));
 		when(config.hetOrbDamageVolume1()).thenReturn(0);
 		manager.trigger(ToaEvent.HET_ORB_DAMAGE);
-		verifyNoMoreInteractions(client);
+		verifyNoMoreInteractions(ignoreStubs(client));
 		verifyNoInteractions(audio, resolver);
 	}
 
@@ -75,7 +134,7 @@ public class SoundPlaybackTest
 		when(config.crondisEnterSound1()).thenReturn("  \"2192\"  ");
 		manager.trigger(ToaEvent.CRONDIS_ENTER);
 		verify(client).playSoundEffect(2192, 64);
-		verifyNoMoreInteractions(client);
+		verifyNoMoreInteractions(ignoreStubs(client));
 		verifyNoInteractions(audio, resolver);
 	}
 
@@ -102,7 +161,7 @@ public class SoundPlaybackTest
 		when(config.crondisEnterVolume5()).thenReturn(200);
 		manager.trigger(ToaEvent.CRONDIS_ENTER);
 		verify(client).playSoundEffect(2192, 127);
-		verifyNoMoreInteractions(client);
+		verifyNoMoreInteractions(ignoreStubs(client));
 		verifyNoInteractions(audio, resolver);
 	}
 
@@ -113,11 +172,13 @@ public class SoundPlaybackTest
 		when(config.crondisEnterSound2()).thenReturn("2193");
 		when(config.crondisEnterVolume2()).thenReturn(100);
 		manager.trigger(ToaEvent.CRONDIS_ENTER);
-		assertEquals(1, mockingDetails(client).getInvocations().size());
-		Object[] arguments = mockingDetails(client).getInvocations().iterator().next().getArguments();
-		int id = (Integer) arguments[0];
+		ArgumentCaptor<Integer> soundId = ArgumentCaptor.forClass(Integer.class);
+		ArgumentCaptor<Integer> volume = ArgumentCaptor.forClass(Integer.class);
+		verify(client).playSoundEffect(soundId.capture(), volume.capture());
+		int id = soundId.getValue();
 		assertTrue(id == 2192 || id == 2193);
-		assertEquals(id == 2192 ? 64 : 127, arguments[1]);
+		assertEquals(id == 2192 ? 64 : 127, volume.getValue().intValue());
+		verifyNoMoreInteractions(ignoreStubs(client));
 		verifyNoInteractions(audio, resolver);
 	}
 
@@ -135,6 +196,7 @@ public class SoundPlaybackTest
 	@Test
 	public void localFileResolutionAndPlaybackRunOnBackgroundThread() throws Exception
 	{
+		when(config.masterVolume()).thenReturn(50);
 		when(config.crondisEnterSound1()).thenReturn(" \"beep-deep/sounds/my sound.wav\" ");
 		File file = new File("my sound.wav");
 		Thread caller = Thread.currentThread();
@@ -146,7 +208,7 @@ public class SoundPlaybackTest
 		CompletableFuture<Void> played = playbackCompletion(file, caller);
 		manager.trigger(ToaEvent.CRONDIS_ENTER);
 		played.get(2, TimeUnit.SECONDS);
-		verify(audio).play(eq(file), floatThat(gain -> Math.abs(gain + 6.0206f) < 0.001f));
+		verify(audio).play(eq(file), floatThat(gain -> Math.abs(gain + 12.0412f) < 0.001f));
 		verify(resolver).localFile("beep-deep/sounds/my sound.wav");
 		verifyNoMoreInteractions(audio, resolver);
 		verifyNoInteractions(client);
@@ -176,6 +238,7 @@ public class SoundPlaybackTest
 	@Test
 	public void cachedRemoteSoundPlaysWithoutDownloading() throws Exception
 	{
+		when(config.masterVolume()).thenReturn(50);
 		String url = "https://example.com/cached.wav";
 		when(config.crondisEnterSound1()).thenReturn(url);
 		remoteEnabled.set(true);
@@ -184,6 +247,7 @@ public class SoundPlaybackTest
 		CompletableFuture<Void> played = playbackCompletion(file, Thread.currentThread());
 		manager.trigger(ToaEvent.CRONDIS_ENTER);
 		played.get(2, TimeUnit.SECONDS);
+		verify(audio).play(eq(file), floatThat(gain -> Math.abs(gain + 12.0412f) < 0.001f));
 		verify(resolver).cachedFile(url);
 		verifyNoMoreInteractions(resolver);
 	}
@@ -235,6 +299,7 @@ public class SoundPlaybackTest
 	@Test
 	public void failedDownloadDoesNotPlayAndNextTriggerRetries() throws Exception
 	{
+		when(config.masterVolume()).thenReturn(50);
 		when(config.crondisEnterSound1()).thenReturn("https://example.com/sound.wav");
 		remoteEnabled.set(true);
 		File file = new File("retry.wav");
@@ -245,7 +310,7 @@ public class SoundPlaybackTest
 		manager.trigger(ToaEvent.CRONDIS_ENTER);
 		played.get(2, TimeUnit.SECONDS);
 		verify(resolver, times(2)).download(anyString(), any());
-		verify(audio).play(eq(file), anyFloat());
+		verify(audio).play(eq(file), floatThat(gain -> Math.abs(gain + 12.0412f) < 0.001f));
 		verifyNoMoreInteractions(audio);
 	}
 

@@ -4,7 +4,7 @@ A RuneLite plugin that plays customizable sounds when certain things happen in a
 
 Each event can be given up to **5 sounds**. When the event fires, one of the configured
 sounds is chosen at random and played. Every event has its own enable/disable toggle, and
-every sound slot has its own volume (0–100%).
+every sound slot has its own volume (0–100%). A master volume control adjusts all plugin sounds together.
 
 ## Events
 
@@ -60,5 +60,12 @@ must be created manually.
 
 ## Volume
 
-Volume is a percentage from 0 to 100, where 100% is the sound's original loudness. A value
-of 0 mutes that slot.
+Master volume defaults to **50%**, and each individual sound's volume defaults to **100%**.
+Both controls range from 0 to 100%. The playback volume is the individual sound's volume
+multiplied by the master volume: for example, 80% individual volume with 50% master volume
+plays at 40% of the sound's original loudness. This applies to sound IDs, local files, and URLs.
+Sound ID volumes apply whether the game's sound effects are enabled or muted, and the game's
+sound-effect volume setting is preserved.
+
+Set master volume to 0 to mute all plugin sounds, or set an individual volume to 0 to mute
+that slot. Saved individual volume settings are preserved.

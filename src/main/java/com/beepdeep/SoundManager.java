@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Preferences;
+import net.runelite.api.SoundEffectVolume;
 import net.runelite.client.audio.AudioPlayer;
 
 /**
@@ -88,25 +90,26 @@ class SoundManager
 		}
 
 		Slot chosen = slots.get(random.nextInt(slots.size()));
-		if (chosen.volume == 0)
+		float volume = chosen.volume * Math.max(0, Math.min(100, config.masterVolume())) / 100f;
+		if (volume == 0)
 		{
 			return;
 		}
-		log.debug("Beep Deep: event {} -> playing '{}' at volume {}", event, chosen.source, chosen.volume);
+		log.debug("Beep Deep: event {} -> playing '{}' at volume {}", event, chosen.source, volume);
 
 		// Try to parse as sound effect ID (must run on client thread)
 		Integer soundId = tryParseSoundId(chosen.source);
 		if (soundId != null)
 		{
-			playEffect(soundId, chosen.volume);
+			playEffect(soundId, volume);
 			return;
 		}
 
 		// File/URL handling (offload to executor for blocking I/O)
-		submit(session, () -> resolveAndPlayFile(session, chosen.source, chosen.volume));
+		submit(session, () -> resolveAndPlayFile(session, chosen.source, volume));
 	}
 
-	private void resolveAndPlayFile(ExecutorService session, String source, int volume)
+	private void resolveAndPlayFile(ExecutorService session, String source, float volume)
 	{
 		// Treat as file path or URL
 		if (SoundFileResolver.isRemote(source))
@@ -177,7 +180,7 @@ class SoundManager
 		}
 	}
 
-	private void playFile(ExecutorService session, File file, int volume)
+	private void playFile(ExecutorService session, File file, float volume)
 	{
 		if (volume <= 0 || executor != session || Thread.currentThread().isInterrupted())
 		{
@@ -198,13 +201,35 @@ class SoundManager
 	/**
 	 * Plays a RuneScape sound effect by ID.
 	 */
-	private void playEffect(int soundId, int volumePercent)
+	private void playEffect(int soundId, float volumePercent)
 	{
 		int effectVolume = effectVolumeFromPercent(volumePercent);
+		if (effectVolume == SoundEffectVolume.MUTED)
+		{
+			return;
+		}
 		log.debug("Beep Deep: playing sound effect {} at volume {}", soundId, effectVolume);
 		try
 		{
-			client.playSoundEffect(soundId, effectVolume);
+			Preferences preferences = client.getPreferences();
+			int gameVolume = preferences.getSoundEffectVolume();
+			if (gameVolume == SoundEffectVolume.MUTED)
+			{
+				client.playSoundEffect(soundId, effectVolume);
+				return;
+			}
+
+			// RuneLite otherwise overrides the supplied volume with the game setting.
+			// The stream is created synchronously, so restore the setting immediately.
+			try
+			{
+				preferences.setSoundEffectVolume(SoundEffectVolume.MUTED);
+				client.playSoundEffect(soundId, effectVolume);
+			}
+			finally
+			{
+				preferences.setSoundEffectVolume(gameVolume);
+			}
 		}
 		catch (RuntimeException e)
 		{
@@ -215,7 +240,7 @@ class SoundManager
 	/**
 	 * Converts 0-100 volume to the client's 0-127 sound effect range.
 	 */
-	static int effectVolumeFromPercent(int percent)
+	static int effectVolumeFromPercent(float percent)
 	{
 		if (percent <= 0)
 		{
@@ -267,10 +292,10 @@ class SoundManager
 	}
 
 	/**
-	 * Converts a linear 1-100 volume into the decibel gain expected by
+	 * Converts a positive linear percentage into the decibel gain expected by
 	 * {@link AudioPlayer}. 100 maps to 0 dB (no attenuation).
 	 */
-	static float gainForVolume(int volume)
+	static float gainForVolume(float volume)
 	{
 		return (float) (20.0 * Math.log10(volume / 100.0));
 	}
