@@ -51,6 +51,8 @@ import net.runelite.client.util.Text;
 public class BeepDeepPlugin extends Plugin
 {
 	private static final int CRONDIS_PUZZLE_REGION = 15698;
+	private static final String CRONDIS_NO_CONTAINER = "You don't have anything to fill.";
+	private static final String CRONDIS_EMPTY_WATERFALL = "It's empty";
 	private static final int APMEKEN_PUZZLE_REGION = 15186;
 	private static final int BABA_REGION = 15188;
 	private static final int SCABARAS_PUZZLE_REGION = 14162;
@@ -249,6 +251,20 @@ public class BeepDeepPlugin extends Plugin
 	@Subscribe
 	public void onAnimationChanged(AnimationChanged event)
 	{
+		if (event.getActor() instanceof NPC && client.getGameState() == GameState.LOGGED_IN)
+		{
+			NPC crocodile = (NPC) event.getActor();
+			Player local = client.getLocalPlayer();
+			if (local != null && regionOf(local) == CRONDIS_PUZZLE_REGION
+				&& crocodile.getWorldView() == client.getTopLevelWorldView()
+				&& crocodile.getId() == NpcID.TOA_CRONDIS_CROCODILE
+				&& crocodile.getAnimation() == AnimationID.CROC_ATTACK_MERGE)
+			{
+				// This crocodile's dedicated attack animation is the palm damage signal.
+				soundManager.trigger(ToaEvent.CRONDIS_PALM_DAMAGE);
+			}
+		}
+
 		// Players use the generic slip animation, which must be scoped to Ba-Ba's room.
 		if (event.getActor() instanceof Player && !notInInstance()
 			&& isBananaSlip(regionOf((Player) event.getActor()), event.getActor().getAnimation()))
@@ -475,6 +491,14 @@ public class BeepDeepPlugin extends Plugin
 		String message = event.getMessage();
 		Player local = client.getLocalPlayer();
 		int region = local == null ? -1 : regionOf(local);
+		String plainMessage = Text.removeTags(message);
+		if (region == CRONDIS_PUZZLE_REGION && (CRONDIS_NO_CONTAINER.equals(plainMessage)
+			|| CRONDIS_EMPTY_WATERFALL.equals(plainMessage)
+			|| (CRONDIS_EMPTY_WATERFALL + ".").equals(plainMessage)))
+		{
+			soundManager.trigger(ToaEvent.CRONDIS_NO_CONTAINER);
+		}
+
 		if (region == SCABARAS_PUZZLE_REGION)
 		{
 			scabarasPuzzles.chat(Text.removeTags(message));

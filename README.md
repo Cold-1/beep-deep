@@ -16,7 +16,8 @@ every sound slot has its own volume (0–100%).
   - Taking damage from the obelisk's falling rocks
   - Failing the sequence puzzle or number pressure plate puzzle
 - Path of Crondis
-  - Crocodile stunts the palm's growth
+  - Crocodile damages the Palm of Resourcefulness
+  - Trying to take water without a container ("You don't have anything to fill.") or from an empty waterfall ("It's empty")
 - Path of Het
   - Het seal not one-phased
   - Any player hit by an Unstable Orb in Akkha's arena

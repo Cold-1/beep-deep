@@ -213,12 +213,185 @@ public interface BeepDeepConfig extends Config
 		return 50;
 	}
 
+	// ===================== Path of Crondis: Palm Damage =====================
+
+	// Retain the original crocodile attack keys so saved sounds and volumes still apply.
+	@ConfigSection(
+		name = "Path of Crondis - Palm Damage",
+		description = "Sounds played when a crocodile damages the Palm of Resourcefulness in the Crondis puzzle room.",
+		position = 3,
+		closedByDefault = true
+	)
+	String crocAttackSection = "crocAttackSection";
+
+	@ConfigItem(keyName = "crocAttackEnabled", name = "Enabled", description = "Play a sound for this event.", section = crocAttackSection, position = 0)
+	default boolean crocAttackEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "crocAttackSound1", name = "Sound 1", description = SOUND_DESC, section = crocAttackSection, position = 1)
+	default String crocAttackSound1()
+	{
+		return "2192";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crocAttackVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = crocAttackSection, position = 2)
+	default int crocAttackVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crocAttackSound2", name = "Sound 2", description = SOUND_DESC, section = crocAttackSection, position = 3)
+	default String crocAttackSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crocAttackVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = crocAttackSection, position = 4)
+	default int crocAttackVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crocAttackSound3", name = "Sound 3", description = SOUND_DESC, section = crocAttackSection, position = 5)
+	default String crocAttackSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crocAttackVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = crocAttackSection, position = 6)
+	default int crocAttackVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crocAttackSound4", name = "Sound 4", description = SOUND_DESC, section = crocAttackSection, position = 7)
+	default String crocAttackSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crocAttackVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = crocAttackSection, position = 8)
+	default int crocAttackVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crocAttackSound5", name = "Sound 5", description = SOUND_DESC, section = crocAttackSection, position = 9)
+	default String crocAttackSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crocAttackVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = crocAttackSection, position = 10)
+	default int crocAttackVolume5()
+	{
+		return 50;
+	}
+
+	// ===================== Path of Crondis: Water Collection Reminder =====================
+
+	@ConfigSection(
+		name = "Path of Crondis - Water Collection Reminder",
+		description = "Sounds played when you try to take water without a container or from an empty waterfall in the Crondis puzzle room.",
+		position = 4,
+		closedByDefault = true
+	)
+	String crondisNoContainerSection = "crondisNoContainerSection";
+
+	@ConfigItem(keyName = "crondisNoContainerEnabled", name = "Enabled", description = "Play a sound when taking water fails because you have no container or the waterfall is empty.", section = crondisNoContainerSection, position = 0)
+	default boolean crondisNoContainerEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "crondisNoContainerSound1", name = "Sound 1", description = SOUND_DESC, section = crondisNoContainerSection, position = 1)
+	default String crondisNoContainerSound1()
+	{
+		return "2192";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crondisNoContainerVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = crondisNoContainerSection, position = 2)
+	default int crondisNoContainerVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crondisNoContainerSound2", name = "Sound 2", description = SOUND_DESC, section = crondisNoContainerSection, position = 3)
+	default String crondisNoContainerSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crondisNoContainerVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = crondisNoContainerSection, position = 4)
+	default int crondisNoContainerVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crondisNoContainerSound3", name = "Sound 3", description = SOUND_DESC, section = crondisNoContainerSection, position = 5)
+	default String crondisNoContainerSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crondisNoContainerVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = crondisNoContainerSection, position = 6)
+	default int crondisNoContainerVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crondisNoContainerSound4", name = "Sound 4", description = SOUND_DESC, section = crondisNoContainerSection, position = 7)
+	default String crondisNoContainerSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crondisNoContainerVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = crondisNoContainerSection, position = 8)
+	default int crondisNoContainerVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "crondisNoContainerSound5", name = "Sound 5", description = SOUND_DESC, section = crondisNoContainerSection, position = 9)
+	default String crondisNoContainerSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "crondisNoContainerVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = crondisNoContainerSection, position = 10)
+	default int crondisNoContainerVolume5()
+	{
+		return 50;
+	}
+
 	// ===================== Path of Apmeken: Enter =====================
 
 	@ConfigSection(
 		name = "Path of Apmeken - Enter",
 		description = "Sounds played when you enter the Path of Apmeken room.",
-		position = 3,
+		position = 5,
 		closedByDefault = true
 	)
 	String apmekenEnterSection = "apmekenEnterSection";
@@ -304,7 +477,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Apmeken - Leave",
 		description = "Sounds played when you leave the Path of Apmeken room.",
-		position = 4,
+		position = 6,
 		closedByDefault = true
 	)
 	String apmekenLeaveSection = "apmekenLeaveSection";
@@ -390,7 +563,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Apmeken - Banana Slip",
 		description = "Sounds played when any player slips on a banana peel in Ba-Ba's boss room.",
-		position = 6,
+		position = 8,
 		closedByDefault = true
 	)
 	String babaBananaSlipSection = "babaBananaSlipSection";
@@ -476,7 +649,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Scabaras - Enter",
 		description = "Sounds played when you enter the Path of Scabaras room.",
-		position = 7,
+		position = 9,
 		closedByDefault = true
 	)
 	String scabarasEnterSection = "scabarasEnterSection";
@@ -562,7 +735,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Scabaras - Leave",
 		description = "Sounds played when you leave the Path of Scabaras room.",
-		position = 8,
+		position = 10,
 		closedByDefault = true
 	)
 	String scabarasLeaveSection = "scabarasLeaveSection";
@@ -648,7 +821,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Scabaras - Obelisks Rockfall",
 		description = "Sounds played when you get hit by rockfall during the obelisks puzzle.",
-		position = 9,
+		position = 11,
 		closedByDefault = true
 	)
 	String scabarasRockfallSection = "scabarasRockfallSection";
@@ -734,7 +907,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Scabaras - Sequence Failure",
 		description = "Sounds played when you fail the sequence pressure plate puzzle (Wiki puzzle #1).",
-		position = 10,
+		position = 12,
 		closedByDefault = true
 	)
 	String scabarasSequenceFailSection = "scabarasSequenceFailSection";
@@ -820,7 +993,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Scabaras - Number Puzzle Failure",
 		description = "Sounds played when an incorrect number puzzle solution deals damage (Wiki puzzle #4).",
-		position = 11,
+		position = 13,
 		closedByDefault = true
 	)
 	String scabarasNumberFailSection = "scabarasNumberFailSection";
@@ -906,7 +1079,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Enter",
 		description = "Sounds played when you enter the Path of Het room.",
-		position = 12,
+		position = 14,
 		closedByDefault = true
 	)
 	String hetEnterSection = "hetEnterSection";
@@ -992,7 +1165,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Leave",
 		description = "Sounds played when you leave the Path of Het room.",
-		position = 13,
+		position = 15,
 		closedByDefault = true
 	)
 	String hetLeaveSection = "hetLeaveSection";
@@ -1078,7 +1251,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Unstable Orb Hit",
 		description = "Sounds played when any player is hit by an Unstable Orb in Akkha's arena.",
-		position = 15,
+		position = 17,
 		closedByDefault = true
 	)
 	String hetUnstableOrbHitSection = "hetUnstableOrbHitSection";
@@ -1164,7 +1337,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Seal Not One-Phased",
 		description = "Sounds played when the Path of Het seal is not killed in one phase.",
-		position = 14,
+		position = 16,
 		closedByDefault = true
 	)
 	String hetOnePhaseFailSection = "hetOnePhaseFailSection";
@@ -1250,7 +1423,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Apmeken - Issue Not Fixed",
 		description = "Sounds played when a Path of Apmeken issue is not fixed in time.",
-		position = 5,
+		position = 7,
 		closedByDefault = true
 	)
 	String apmekenFailSection = "apmekenFailSection";
@@ -1336,7 +1509,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - No Rare Loot",
 		description = "Sounds played when the ToA vault opens without rare loot.",
-		position = 16,
+		position = 18,
 		closedByDefault = true
 	)
 	String vaultNoRareLootSection = "vaultNoRareLootSection";
@@ -1422,7 +1595,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - Rare Loot",
 		description = "Sounds played when the ToA vault opens with rare loot.",
-		position = 17,
+		position = 19,
 		closedByDefault = true
 	)
 	String vaultRareLootSection = "vaultRareLootSection";
