@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import javax.inject.Inject;
 import net.runelite.api.ActorSpotAnim;
 import net.runelite.api.ChatMessageType;
@@ -51,14 +52,24 @@ import net.runelite.client.util.Text;
 public class BeepDeepPlugin extends Plugin
 {
 	private static final int CRONDIS_PUZZLE_REGION = 15698;
+	private static final int ZEBAK_REGION = 15700;
 	private static final String CRONDIS_NO_CONTAINER = "You don't have anything to fill.";
 	private static final String CRONDIS_EMPTY_WATERFALL = "It's empty";
 	private static final int APMEKEN_PUZZLE_REGION = 15186;
 	private static final int BABA_REGION = 15188;
 	private static final int SCABARAS_PUZZLE_REGION = 14162;
+	private static final int KEPHRI_REGION = 14164;
 	private static final int HET_PUZZLE_REGION = 14674;
 	private static final int AKKHA_REGION = 14676;
 	private static final int TOA_VAULT_REGION = 14672;
+	private static final int TOA_NEXUS_REGION = 14160;
+	private static final int TOA_WARDENS_REGION = 15184;
+	private static final int TOA_WARDENS_FINAL_REGION = 15696;
+	private static final Pattern RAID_ENTER_MESSAGE =
+		Pattern.compile("^You enter the Tombs of Amascut \\([^()]+\\)\\.\\.\\..*");
+	private static final String ROOM_FAIL_MESSAGE = "Your party failed to complete the challenge.";
+	private static final String RAID_FAIL_MESSAGE = "You failed to survive the Tombs of Amascut.";
+	private static final String RAID_ABANDON_MESSAGE = "You abandon the raid and leave the Tombs of Amascut.";
 
 	private static final int TICKS_TO_WAIT_FOR_HET_COMPLETE = 25;
 	private static final String HET_SEAL_STRUCK = "The statue has been struck! The seal weakens!";
@@ -77,6 +88,7 @@ public class BeepDeepPlugin extends Plugin
 	private SoundManager soundManager;
 
 	private int currentRegion = -1;
+	private boolean inRaid;
 	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
 	private int hetSealWaitingTick = -1;
 	private int scabarasRockfallTick = -1;
@@ -101,6 +113,7 @@ public class BeepDeepPlugin extends Plugin
 	private void resetState()
 	{
 		currentRegion = -1;
+		inRaid = false;
 		orbImpactCycles.clear();
 		hetSealWaitingTick = -1;
 		scabarasPuzzles.reset();
@@ -140,8 +153,22 @@ public class BeepDeepPlugin extends Plugin
 		{
 			return;
 		}
+		if (local.getLocalLocation() == null || client.getTopLevelWorldView() == null)
+		{
+			return;
+		}
 
 		int region = regionOf(local);
+		if (region == -1 && !notInInstance())
+		{
+			return;
+		}
+		boolean currentlyInRaid = isRaidRegion(region);
+		if (inRaid && !currentlyInRaid)
+		{
+			soundManager.trigger(ToaEvent.RAID_LEAVE);
+		}
+		inRaid = currentlyInRaid;
 		if (region != currentRegion)
 		{
 			int previous = currentRegion;
@@ -198,11 +225,11 @@ public class BeepDeepPlugin extends Plugin
 		}
 	}
 
-	// Enter or leave a path's puzzle room, once per region transition.
+	// Puzzle leave sounds only accompany a transition to that path's boss room.
 	private void onRegionChanged(int previous, int region)
 	{
 		ToaEvent leave = puzzleRoomEvent(previous, false);
-		if (leave != null)
+		if (leave != null && region == bossRegionForPuzzle(previous))
 		{
 			soundManager.trigger(leave);
 		}
@@ -246,6 +273,32 @@ public class BeepDeepPlugin extends Plugin
 			default:
 				return null;
 		}
+	}
+
+	private static int bossRegionForPuzzle(int region)
+	{
+		switch (region)
+		{
+			case CRONDIS_PUZZLE_REGION:
+				return ZEBAK_REGION;
+			case APMEKEN_PUZZLE_REGION:
+				return BABA_REGION;
+			case SCABARAS_PUZZLE_REGION:
+				return KEPHRI_REGION;
+			case HET_PUZZLE_REGION:
+				return AKKHA_REGION;
+			default:
+				return -1;
+		}
+	}
+
+	private static boolean isRaidRegion(int region)
+	{
+		return puzzleRoomEvent(region, true) != null
+			|| region == ZEBAK_REGION || region == BABA_REGION
+			|| region == KEPHRI_REGION || region == AKKHA_REGION
+			|| region == TOA_NEXUS_REGION || region == TOA_VAULT_REGION
+			|| region == TOA_WARDENS_REGION || region == TOA_WARDENS_FINAL_REGION;
 	}
 
 	@Subscribe
@@ -323,6 +376,24 @@ public class BeepDeepPlugin extends Plugin
 	@Subscribe
 	public void onHitsplatApplied(HitsplatApplied event)
 	{
+		Player local = client.getLocalPlayer();
+		if (client.getGameState() == GameState.LOGGED_IN && local != null
+			&& event.getActor() instanceof Player && regionOf(local) == HET_PUZZLE_REGION)
+		{
+			Player player = (Player) event.getActor();
+			if (player.getWorldView() != client.getTopLevelWorldView() || regionOf(player) != HET_PUZZLE_REGION)
+			{
+				return;
+			}
+			int type = event.getHitsplat().getHitsplatType();
+			if (event.getHitsplat().getAmount() > 0
+				&& (type == HitsplatID.DAMAGE_ME || type == HitsplatID.DAMAGE_OTHER || type == HitsplatID.DAMAGE_MAX_ME))
+			{
+				// Light and dark orbs are the puzzle room's only damage source.
+				soundManager.trigger(ToaEvent.HET_ORB_DAMAGE);
+			}
+			return;
+		}
 		if (!inScabaras() || !(event.getActor() instanceof Player))
 		{
 			return;
@@ -482,16 +553,34 @@ public class BeepDeepPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		if (notInInstance() || (event.getType() != ChatMessageType.GAMEMESSAGE
-			&& event.getType() != ChatMessageType.SPAM))
+		if (event.getType() != ChatMessageType.GAMEMESSAGE
+			&& event.getType() != ChatMessageType.SPAM)
 		{
 			return;
 		}
 
 		String message = event.getMessage();
+		String plainMessage = Text.removeTags(message);
+		// These messages may arrive before entry or after the exit has loaded.
+		if (RAID_ENTER_MESSAGE.matcher(plainMessage).matches())
+		{
+			soundManager.trigger(ToaEvent.RAID_ENTER);
+		}
+		else if (plainMessage.startsWith(ROOM_FAIL_MESSAGE))
+		{
+			soundManager.trigger(ToaEvent.ROOM_FAIL);
+		}
+		else if (plainMessage.equals(RAID_FAIL_MESSAGE) || plainMessage.equals(RAID_ABANDON_MESSAGE))
+		{
+			soundManager.trigger(ToaEvent.RAID_FAIL);
+		}
+
+		if (notInInstance())
+		{
+			return;
+		}
 		Player local = client.getLocalPlayer();
 		int region = local == null ? -1 : regionOf(local);
-		String plainMessage = Text.removeTags(message);
 		if (region == CRONDIS_PUZZLE_REGION && (CRONDIS_NO_CONTAINER.equals(plainMessage)
 			|| CRONDIS_EMPTY_WATERFALL.equals(plainMessage)
 			|| (CRONDIS_EMPTY_WATERFALL + ".").equals(plainMessage)))

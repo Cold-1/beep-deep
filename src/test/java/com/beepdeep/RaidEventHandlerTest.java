@@ -33,7 +33,7 @@ public class RaidEventHandlerTest
 	}
 
 	@Test
-	public void directPuzzleTransitionPlaysLeaveBeforeEnter()
+	public void directPuzzleTransitionOnlyPlaysNewRoomEnter()
 	{
 		f.region(15698);
 		f.ticks(1);
@@ -41,7 +41,6 @@ public class RaidEventHandlerTest
 		f.ticks(1);
 		InOrder order = inOrder(f.sounds);
 		order.verify(f.sounds).trigger(ToaEvent.CRONDIS_ENTER);
-		order.verify(f.sounds).trigger(ToaEvent.CRONDIS_LEAVE);
 		order.verify(f.sounds).trigger(ToaEvent.HET_ENTER);
 		order.verifyNoMoreInteractions();
 	}

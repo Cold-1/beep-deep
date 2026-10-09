@@ -8,7 +8,10 @@ every sound slot has its own volume (0–100%).
 
 ## Events
 
-- Enter / leave puzzle rooms
+- Enter puzzle rooms / leave puzzle rooms for their corresponding boss rooms
+- Enter the raid (from the raid entry chat message) / leave the raid (on actual exit, including teleports)
+- Fail a puzzle or boss room challenge ("Your party failed to complete the challenge.", with any following text ignored)
+- Fail to survive or abandon the raid
 - Path of Apmeken
   - Apmeken issue not fixed
   - Any player slipping on a banana peel in Ba-Ba's boss room
@@ -19,6 +22,7 @@ every sound slot has its own volume (0–100%).
   - Crocodile damages the Palm of Resourcefulness
   - Trying to take water without a container ("You don't have anything to fill.") or from an empty waterfall ("It's empty")
 - Path of Het
+  - Any player taking damage from light or dark orbs in the Het puzzle room
   - Het seal not one-phased
   - Any player hit by an Unstable Orb in Akkha's arena
 - Vault opens with no rare loot

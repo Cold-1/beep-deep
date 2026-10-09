@@ -513,7 +513,9 @@ public class ScabarasPuzzleFailureTest
 		damage(4);
 		when(f.client.getGameState()).thenReturn(GameState.LOGGED_IN);
 		advance();
-		verifyNoInteractions(f.sounds);
+		// Het damage has its own alert, but must not count as a Scabaras failure.
+		verify(f.sounds).trigger(ToaEvent.HET_ORB_DAMAGE);
+		verifyNoMoreInteractions(f.sounds);
 	}
 
 	@Test
@@ -540,7 +542,6 @@ public class ScabarasPuzzleFailureTest
 		damage(4);
 		f.region(14674);
 		advance();
-		verify(f.sounds).trigger(ToaEvent.SCABARAS_LEAVE);
 		verify(f.sounds).trigger(ToaEvent.HET_ENTER);
 		verifyNoMoreInteractions(f.sounds);
 	}

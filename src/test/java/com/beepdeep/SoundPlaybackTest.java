@@ -54,6 +54,22 @@ public class SoundPlaybackTest
 	}
 
 	@Test
+	public void hetOrbDamageUsesConfiguredSoundAndHonorsToggleAndVolume()
+	{
+		when(config.hetOrbDamageSound1()).thenReturn("1234");
+		when(config.hetOrbDamageVolume1()).thenReturn(75);
+		manager.trigger(ToaEvent.HET_ORB_DAMAGE);
+		verifyNoInteractions(client, audio, resolver);
+		when(config.hetOrbDamageEnabled()).thenReturn(true);
+		manager.trigger(ToaEvent.HET_ORB_DAMAGE);
+		verify(client).playSoundEffect(1234, SoundManager.effectVolumeFromPercent(75));
+		when(config.hetOrbDamageVolume1()).thenReturn(0);
+		manager.trigger(ToaEvent.HET_ORB_DAMAGE);
+		verifyNoMoreInteractions(client);
+		verifyNoInteractions(audio, resolver);
+	}
+
+	@Test
 	public void quotedSoundEffectUsesClientVolumeWithoutFileIo()
 	{
 		when(config.crondisEnterSound1()).thenReturn("  \"2192\"  ");

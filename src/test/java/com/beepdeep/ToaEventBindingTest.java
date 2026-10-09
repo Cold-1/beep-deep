@@ -20,6 +20,18 @@ public class ToaEventBindingTest
 	public static Collection<Object[]> events()
 	{
 		return Arrays.asList(new Object[][]{
+			{ToaEvent.RAID_ENTER, (Predicate<BeepDeepConfig>) BeepDeepConfig::raidEnterEnabled,
+				sources(BeepDeepConfig::raidEnterSound1, BeepDeepConfig::raidEnterSound2, BeepDeepConfig::raidEnterSound3, BeepDeepConfig::raidEnterSound4, BeepDeepConfig::raidEnterSound5),
+				volumes(BeepDeepConfig::raidEnterVolume1, BeepDeepConfig::raidEnterVolume2, BeepDeepConfig::raidEnterVolume3, BeepDeepConfig::raidEnterVolume4, BeepDeepConfig::raidEnterVolume5), "2192"},
+			{ToaEvent.RAID_LEAVE, (Predicate<BeepDeepConfig>) BeepDeepConfig::raidLeaveEnabled,
+				sources(BeepDeepConfig::raidLeaveSound1, BeepDeepConfig::raidLeaveSound2, BeepDeepConfig::raidLeaveSound3, BeepDeepConfig::raidLeaveSound4, BeepDeepConfig::raidLeaveSound5),
+				volumes(BeepDeepConfig::raidLeaveVolume1, BeepDeepConfig::raidLeaveVolume2, BeepDeepConfig::raidLeaveVolume3, BeepDeepConfig::raidLeaveVolume4, BeepDeepConfig::raidLeaveVolume5), "2192"},
+			{ToaEvent.ROOM_FAIL, (Predicate<BeepDeepConfig>) BeepDeepConfig::roomFailEnabled,
+				sources(BeepDeepConfig::roomFailSound1, BeepDeepConfig::roomFailSound2, BeepDeepConfig::roomFailSound3, BeepDeepConfig::roomFailSound4, BeepDeepConfig::roomFailSound5),
+				volumes(BeepDeepConfig::roomFailVolume1, BeepDeepConfig::roomFailVolume2, BeepDeepConfig::roomFailVolume3, BeepDeepConfig::roomFailVolume4, BeepDeepConfig::roomFailVolume5), "3892"},
+			{ToaEvent.RAID_FAIL, (Predicate<BeepDeepConfig>) BeepDeepConfig::raidFailEnabled,
+				sources(BeepDeepConfig::raidFailSound1, BeepDeepConfig::raidFailSound2, BeepDeepConfig::raidFailSound3, BeepDeepConfig::raidFailSound4, BeepDeepConfig::raidFailSound5),
+				volumes(BeepDeepConfig::raidFailVolume1, BeepDeepConfig::raidFailVolume2, BeepDeepConfig::raidFailVolume3, BeepDeepConfig::raidFailVolume4, BeepDeepConfig::raidFailVolume5), "3892"},
 			{ToaEvent.CRONDIS_ENTER, (Predicate<BeepDeepConfig>) BeepDeepConfig::crondisEnterEnabled,
 				sources(BeepDeepConfig::crondisEnterSound1, BeepDeepConfig::crondisEnterSound2, BeepDeepConfig::crondisEnterSound3, BeepDeepConfig::crondisEnterSound4, BeepDeepConfig::crondisEnterSound5),
 				volumes(BeepDeepConfig::crondisEnterVolume1, BeepDeepConfig::crondisEnterVolume2, BeepDeepConfig::crondisEnterVolume3, BeepDeepConfig::crondisEnterVolume4, BeepDeepConfig::crondisEnterVolume5), "2192"},
@@ -56,6 +68,9 @@ public class ToaEventBindingTest
 			{ToaEvent.HET_LEAVE, (Predicate<BeepDeepConfig>) BeepDeepConfig::hetLeaveEnabled,
 				sources(BeepDeepConfig::hetLeaveSound1, BeepDeepConfig::hetLeaveSound2, BeepDeepConfig::hetLeaveSound3, BeepDeepConfig::hetLeaveSound4, BeepDeepConfig::hetLeaveSound5),
 				volumes(BeepDeepConfig::hetLeaveVolume1, BeepDeepConfig::hetLeaveVolume2, BeepDeepConfig::hetLeaveVolume3, BeepDeepConfig::hetLeaveVolume4, BeepDeepConfig::hetLeaveVolume5), "2192"},
+			{ToaEvent.HET_ORB_DAMAGE, (Predicate<BeepDeepConfig>) BeepDeepConfig::hetOrbDamageEnabled,
+				sources(BeepDeepConfig::hetOrbDamageSound1, BeepDeepConfig::hetOrbDamageSound2, BeepDeepConfig::hetOrbDamageSound3, BeepDeepConfig::hetOrbDamageSound4, BeepDeepConfig::hetOrbDamageSound5),
+				volumes(BeepDeepConfig::hetOrbDamageVolume1, BeepDeepConfig::hetOrbDamageVolume2, BeepDeepConfig::hetOrbDamageVolume3, BeepDeepConfig::hetOrbDamageVolume4, BeepDeepConfig::hetOrbDamageVolume5), "2192"},
 			{ToaEvent.HET_UNSTABLE_ORB_HIT, (Predicate<BeepDeepConfig>) BeepDeepConfig::hetUnstableOrbHitEnabled,
 				sources(BeepDeepConfig::hetUnstableOrbHitSound1, BeepDeepConfig::hetUnstableOrbHitSound2, BeepDeepConfig::hetUnstableOrbHitSound3, BeepDeepConfig::hetUnstableOrbHitSound4, BeepDeepConfig::hetUnstableOrbHitSound5),
 				volumes(BeepDeepConfig::hetUnstableOrbHitVolume1, BeepDeepConfig::hetUnstableOrbHitVolume2, BeepDeepConfig::hetUnstableOrbHitVolume3, BeepDeepConfig::hetUnstableOrbHitVolume4, BeepDeepConfig::hetUnstableOrbHitVolume5), "2192"},

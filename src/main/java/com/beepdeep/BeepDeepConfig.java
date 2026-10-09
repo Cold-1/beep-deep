@@ -19,6 +19,350 @@ public interface BeepDeepConfig extends Config
 		"Sound effect ID (numeric), absolute file path, relative path inside .runelite, or URL (only used when remote URLs are enabled). "
 			+ "For files: WAV, AU, AIFF. Leave blank to disable this slot.";
 
+	// ===================== Raid - Enter =====================
+
+	@ConfigSection(
+		name = "Raid - Enter",
+		description = "Sounds played when you enter the Tombs of Amascut.",
+		position = 21,
+		closedByDefault = true
+	)
+	String raidEnterSection = "raidEnterSection";
+
+	@ConfigItem(keyName = "raidEnterEnabled", name = "Enabled", description = "Play a sound for this event.", section = raidEnterSection, position = 0)
+	default boolean raidEnterEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "raidEnterSound1", name = "Sound 1", description = SOUND_DESC, section = raidEnterSection, position = 1)
+	default String raidEnterSound1()
+	{
+		return "2192";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidEnterVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = raidEnterSection, position = 2)
+	default int raidEnterVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidEnterSound2", name = "Sound 2", description = SOUND_DESC, section = raidEnterSection, position = 3)
+	default String raidEnterSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidEnterVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = raidEnterSection, position = 4)
+	default int raidEnterVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidEnterSound3", name = "Sound 3", description = SOUND_DESC, section = raidEnterSection, position = 5)
+	default String raidEnterSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidEnterVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = raidEnterSection, position = 6)
+	default int raidEnterVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidEnterSound4", name = "Sound 4", description = SOUND_DESC, section = raidEnterSection, position = 7)
+	default String raidEnterSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidEnterVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = raidEnterSection, position = 8)
+	default int raidEnterVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidEnterSound5", name = "Sound 5", description = SOUND_DESC, section = raidEnterSection, position = 9)
+	default String raidEnterSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidEnterVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = raidEnterSection, position = 10)
+	default int raidEnterVolume5()
+	{
+		return 50;
+	}
+
+	// ===================== Raid - Leave =====================
+
+	@ConfigSection(
+		name = "Raid - Leave",
+		description = "Sounds played when you actually exit the raid, including teleporting out.",
+		position = 22,
+		closedByDefault = true
+	)
+	String raidLeaveSection = "raidLeaveSection";
+
+	@ConfigItem(keyName = "raidLeaveEnabled", name = "Enabled", description = "Play a sound for this event.", section = raidLeaveSection, position = 0)
+	default boolean raidLeaveEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "raidLeaveSound1", name = "Sound 1", description = SOUND_DESC, section = raidLeaveSection, position = 1)
+	default String raidLeaveSound1()
+	{
+		return "2192";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidLeaveVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = raidLeaveSection, position = 2)
+	default int raidLeaveVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidLeaveSound2", name = "Sound 2", description = SOUND_DESC, section = raidLeaveSection, position = 3)
+	default String raidLeaveSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidLeaveVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = raidLeaveSection, position = 4)
+	default int raidLeaveVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidLeaveSound3", name = "Sound 3", description = SOUND_DESC, section = raidLeaveSection, position = 5)
+	default String raidLeaveSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidLeaveVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = raidLeaveSection, position = 6)
+	default int raidLeaveVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidLeaveSound4", name = "Sound 4", description = SOUND_DESC, section = raidLeaveSection, position = 7)
+	default String raidLeaveSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidLeaveVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = raidLeaveSection, position = 8)
+	default int raidLeaveVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidLeaveSound5", name = "Sound 5", description = SOUND_DESC, section = raidLeaveSection, position = 9)
+	default String raidLeaveSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidLeaveVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = raidLeaveSection, position = 10)
+	default int raidLeaveVolume5()
+	{
+		return 50;
+	}
+
+	// ===================== Raid - Failed or Wiped Challenge Room =====================
+
+	@ConfigSection(
+		name = "Raid - Failed or Wiped Challenge Room",
+		description = "Sounds played when your party fails a puzzle or boss room challenge.",
+		position = 23,
+		closedByDefault = true
+	)
+	String roomFailSection = "roomFailSection";
+
+	@ConfigItem(keyName = "roomFailEnabled", name = "Enabled", description = "Play a sound for this event.", section = roomFailSection, position = 0)
+	default boolean roomFailEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "roomFailSound1", name = "Sound 1", description = SOUND_DESC, section = roomFailSection, position = 1)
+	default String roomFailSound1()
+	{
+		return "3892";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "roomFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = roomFailSection, position = 2)
+	default int roomFailVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "roomFailSound2", name = "Sound 2", description = SOUND_DESC, section = roomFailSection, position = 3)
+	default String roomFailSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "roomFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = roomFailSection, position = 4)
+	default int roomFailVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "roomFailSound3", name = "Sound 3", description = SOUND_DESC, section = roomFailSection, position = 5)
+	default String roomFailSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "roomFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = roomFailSection, position = 6)
+	default int roomFailVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "roomFailSound4", name = "Sound 4", description = SOUND_DESC, section = roomFailSection, position = 7)
+	default String roomFailSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "roomFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = roomFailSection, position = 8)
+	default int roomFailVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "roomFailSound5", name = "Sound 5", description = SOUND_DESC, section = roomFailSection, position = 9)
+	default String roomFailSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "roomFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = roomFailSection, position = 10)
+	default int roomFailVolume5()
+	{
+		return 50;
+	}
+
+	// ===================== Raid - Failed or Abandoned Raid =====================
+
+	@ConfigSection(
+		name = "Raid - Failed or Abandoned Raid",
+		description = "Sounds played when you fail to survive or abandon the raid.",
+		position = 24,
+		closedByDefault = true
+	)
+	String raidFailSection = "raidFailSection";
+
+	@ConfigItem(keyName = "raidFailEnabled", name = "Enabled", description = "Play a sound for this event.", section = raidFailSection, position = 0)
+	default boolean raidFailEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "raidFailSound1", name = "Sound 1", description = SOUND_DESC, section = raidFailSection, position = 1)
+	default String raidFailSound1()
+	{
+		return "3892";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidFailVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = raidFailSection, position = 2)
+	default int raidFailVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidFailSound2", name = "Sound 2", description = SOUND_DESC, section = raidFailSection, position = 3)
+	default String raidFailSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidFailVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = raidFailSection, position = 4)
+	default int raidFailVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidFailSound3", name = "Sound 3", description = SOUND_DESC, section = raidFailSection, position = 5)
+	default String raidFailSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidFailVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = raidFailSection, position = 6)
+	default int raidFailVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidFailSound4", name = "Sound 4", description = SOUND_DESC, section = raidFailSection, position = 7)
+	default String raidFailSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidFailVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = raidFailSection, position = 8)
+	default int raidFailVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "raidFailSound5", name = "Sound 5", description = SOUND_DESC, section = raidFailSection, position = 9)
+	default String raidFailSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "raidFailVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = raidFailSection, position = 10)
+	default int raidFailVolume5()
+	{
+		return 50;
+	}
+
 	// ===================== General =====================
 
 	@ConfigSection(
@@ -131,7 +475,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Path of Crondis - Leave",
-		description = "Sounds played when you leave the Path of Crondis room.",
+		description = "Sounds played when you leave the Crondis puzzle room for Zebak's boss room.",
 		position = 2,
 		closedByDefault = true
 	)
@@ -476,7 +820,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Path of Apmeken - Leave",
-		description = "Sounds played when you leave the Path of Apmeken room.",
+		description = "Sounds played when you leave the Apmeken puzzle room for Ba-Ba's boss room.",
 		position = 6,
 		closedByDefault = true
 	)
@@ -734,7 +1078,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Path of Scabaras - Leave",
-		description = "Sounds played when you leave the Path of Scabaras room.",
+		description = "Sounds played when you leave the Scabaras puzzle room for Kephri's boss room.",
 		position = 10,
 		closedByDefault = true
 	)
@@ -1164,7 +1508,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Path of Het - Leave",
-		description = "Sounds played when you leave the Path of Het room.",
+		description = "Sounds played when you leave the Het puzzle room for Akkha's boss room.",
 		position = 15,
 		closedByDefault = true
 	)
@@ -1246,12 +1590,98 @@ public interface BeepDeepConfig extends Config
 		return 50;
 	}
 
+	// ===================== Path of Het: Orb/Light Damage =====================
+
+	@ConfigSection(
+		name = "Path of Het - Orb/Light Damage",
+		description = "Sounds played when any player takes damage from light or dark orbs in the Het puzzle room.",
+		position = 16,
+		closedByDefault = true
+	)
+	String hetOrbDamageSection = "hetOrbDamageSection";
+
+	@ConfigItem(keyName = "hetOrbDamageEnabled", name = "Enabled", description = "Play a sound for this event.", section = hetOrbDamageSection, position = 0)
+	default boolean hetOrbDamageEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "hetOrbDamageSound1", name = "Sound 1", description = SOUND_DESC, section = hetOrbDamageSection, position = 1)
+	default String hetOrbDamageSound1()
+	{
+		return "2192";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "hetOrbDamageVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = hetOrbDamageSection, position = 2)
+	default int hetOrbDamageVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "hetOrbDamageSound2", name = "Sound 2", description = SOUND_DESC, section = hetOrbDamageSection, position = 3)
+	default String hetOrbDamageSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "hetOrbDamageVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = hetOrbDamageSection, position = 4)
+	default int hetOrbDamageVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "hetOrbDamageSound3", name = "Sound 3", description = SOUND_DESC, section = hetOrbDamageSection, position = 5)
+	default String hetOrbDamageSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "hetOrbDamageVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = hetOrbDamageSection, position = 6)
+	default int hetOrbDamageVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "hetOrbDamageSound4", name = "Sound 4", description = SOUND_DESC, section = hetOrbDamageSection, position = 7)
+	default String hetOrbDamageSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "hetOrbDamageVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = hetOrbDamageSection, position = 8)
+	default int hetOrbDamageVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "hetOrbDamageSound5", name = "Sound 5", description = SOUND_DESC, section = hetOrbDamageSection, position = 9)
+	default String hetOrbDamageSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "hetOrbDamageVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = hetOrbDamageSection, position = 10)
+	default int hetOrbDamageVolume5()
+	{
+		return 50;
+	}
+
 	// ===================== Path of Het: Unstable Orb Hit =====================
 
 	@ConfigSection(
 		name = "Path of Het - Unstable Orb Hit",
 		description = "Sounds played when any player is hit by an Unstable Orb in Akkha's arena.",
-		position = 17,
+		position = 18,
 		closedByDefault = true
 	)
 	String hetUnstableOrbHitSection = "hetUnstableOrbHitSection";
@@ -1337,7 +1767,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Path of Het - Seal Not One-Phased",
 		description = "Sounds played when the Path of Het seal is not killed in one phase.",
-		position = 16,
+		position = 17,
 		closedByDefault = true
 	)
 	String hetOnePhaseFailSection = "hetOnePhaseFailSection";
@@ -1509,7 +1939,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - No Rare Loot",
 		description = "Sounds played when the ToA vault opens without rare loot.",
-		position = 18,
+		position = 19,
 		closedByDefault = true
 	)
 	String vaultNoRareLootSection = "vaultNoRareLootSection";
@@ -1595,7 +2025,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - Rare Loot",
 		description = "Sounds played when the ToA vault opens with rare loot.",
-		position = 19,
+		position = 20,
 		closedByDefault = true
 	)
 	String vaultRareLootSection = "vaultRareLootSection";
