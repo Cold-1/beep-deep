@@ -8,7 +8,6 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.HeadlessException;
-import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
@@ -166,9 +165,7 @@ class SoundConfigurationSharing
 		AWTEvent current = EventQueue.getCurrentEvent();
 		Component source = current != null && current.getSource() instanceof Component
 			? (Component) current.getSource() : null;
-		JCheckBox checkbox = labeledCheckbox(source, name);
-		return checkbox != null ? checkbox
-			: labeledCheckbox(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner(), name);
+		return labeledCheckbox(source, name);
 	}
 
 	static JCheckBox labeledCheckbox(Component component, String name)
