@@ -4,13 +4,13 @@ A RuneLite plugin that plays customizable sounds when certain things happen in a
 
 Each event can be given up to **5 sounds**. When the event fires, one of the configured
 sounds is chosen at random and played. Every event has its own enable/disable toggle, and
-every sound slot has its own volume (0–100%). A master volume control adjusts all plugin sounds together.
+every sound slot has its own volume (0–100%). **General → Master volume** adjusts all plugin sounds together; set it to 0 to mute them.
 
 ## Events
 
-- Enter puzzle rooms / leave puzzle rooms for their corresponding boss rooms
-- Enter the raid (from the raid entry chat message) / leave the raid (on actual exit, including teleports)
-- Fail a puzzle or boss room challenge ("Your party failed to complete the challenge.", with any following text ignored)
+- Enter each of the four path puzzle rooms / leave them for their corresponding boss rooms
+- Enter the raid / leave the raid, including teleports out
+- Fail a puzzle or boss room challenge
 - Fail to survive or abandon the raid
 - Path of Apmeken
   - Apmeken issue not fixed
@@ -28,8 +28,6 @@ every sound slot has its own volume (0–100%). A master volume control adjusts 
 - Vault opens with no rare loot
 - Vault opens with rare loot
 
-These events are supported by the plugin and can each play a configured sound when triggered.
-
 ## Configuring sounds
 
 For each sound slot you can provide either:
@@ -43,6 +41,7 @@ Leave a slot blank to disable it.
 
 Relative file paths resolve from your RuneLite directory, so `beep-deep/sounds/beep.wav` points to
 `.runelite/beep-deep/sounds/beep.wav`. Absolute paths can point to sound files anywhere on your computer.
+
 ### Supported formats
 
 Only formats supported by Java's built-in audio system are playable: **WAV, AU, and AIFF**.
@@ -65,6 +64,15 @@ Enable **Allow remote URLs** in **General** to use sound links. It is disabled b
 
 > ⚠️ Enabling remote URLs submits your IP address to a 3rd-party server not controlled or
 > verified by RuneLite developers.
+
+### Party Sync
+
+Join the same RuneLite party and enable **General → Enable Party Sync** on each member's
+Beep Deep settings. It is disabled by default. Choose one member to enable **Party Leader**
+to detect shared raid events.
+
+Synced events play the same sound slot for everyone, using each member's own sound assignments,
+event toggles, and volume settings. Share a sound configuration if you want matching sounds.
 
 ## Sharing a sound configuration
 

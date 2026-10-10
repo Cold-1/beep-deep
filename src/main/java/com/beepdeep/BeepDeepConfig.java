@@ -13,7 +13,7 @@ public interface BeepDeepConfig extends Config
 	String GROUP = "beepdeep";
 
 	String REMOTE_WARNING =
-		"This feature submits your IP address to a 3rd-party server not controlled or verified by RuneLite developers";
+		"This feature submits your IP address to a 3rd-party server not controlled or verified by RuneLite developers.";
 
 	String SOUND_DESC =
 		"Sound effect ID (numeric), absolute file path, relative path inside .runelite, or URL (only used when remote URLs are enabled). "
@@ -478,7 +478,7 @@ public interface BeepDeepConfig extends Config
 	)
 	default int masterVolume()
 	{
-		return 50;
+		return 100;
 	}
 	// ===================== Path of Crondis: Enter =====================
 
@@ -1345,7 +1345,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Path of Scabaras - Sequence Failure",
-		description = "Sounds played when you fail the sequence pressure plate puzzle (Wiki puzzle #1).",
+		description = "Sounds played when you fail the sequence pressure plate puzzle.",
 		position = 12,
 		closedByDefault = true
 	)
@@ -1431,7 +1431,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Path of Scabaras - Number Puzzle Failure",
-		description = "Sounds played when an incorrect number puzzle solution deals damage (Wiki puzzle #4).",
+		description = "Sounds played when an incorrect number puzzle solution deals damage.",
 		position = 13,
 		closedByDefault = true
 	)
