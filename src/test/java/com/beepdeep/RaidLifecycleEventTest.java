@@ -25,13 +25,17 @@ public class RaidLifecycleEventTest
 	public void entryAcceptsEveryDifficultyAndFormattingBeforeInstanceLoads()
 	{
 		when(f.world.isInstance()).thenReturn(false);
-		for (String difficulty : new String[]{"Entry Mode", "Normal Mode", "Expert Mode"})
+		for (String message : new String[]{
+			"You enter the Tombs of Amascut...",
+			"You enter the Tombs of Amascut (Expert Mode)...",
+			"You enter the Tombs of Amascut (Entry Mode)..."})
 		{
-			chat(ChatMessageType.GAMEMESSAGE,
-				"You enter the Tombs of Amascut (<col=ff0000>" + difficulty + "</col>)...");
+			chat(ChatMessageType.GAMEMESSAGE, message);
+			chat(ChatMessageType.SPAM, "<col=ff0000>" + message + "</col>");
 		}
-		chat(ChatMessageType.SPAM, "You enter the Tombs of Amascut (Normal Mode)...");
-		verify(f.sounds, times(4)).trigger(ToaEvent.RAID_ENTER);
+		chat(ChatMessageType.GAMEMESSAGE, "You enter the Tombs of Amascut");
+		chat(ChatMessageType.GAMEMESSAGE, "Raid message: You enter the Tombs of Amascut...");
+		verify(f.sounds, times(8)).trigger(ToaEvent.RAID_ENTER);
 		verifyNoMoreInteractions(f.sounds);
 	}
 
@@ -69,7 +73,7 @@ public class RaidLifecycleEventTest
 	public void playerChatAndIncompleteOrUnrelatedGameMessagesAreSilent()
 	{
 		String[] messages = {
-			"You enter the Tombs of Amascut (Normal Mode)...",
+			"You enter the Tombs of Amascut...",
 			"Your party failed to complete the challenge.",
 			"You failed to survive the Tombs of Amascut.",
 			"You abandon the raid and leave the Tombs of Amascut."
@@ -80,7 +84,7 @@ public class RaidLifecycleEventTest
 			chat(ChatMessageType.PRIVATECHAT, message);
 			chat(ChatMessageType.FRIENDSCHAT, message);
 		}
-		chat(ChatMessageType.GAMEMESSAGE, "You enter the Tombs of Amascut...");
+		chat(ChatMessageType.GAMEMESSAGE, "You enter the Tombs of");
 		chat(ChatMessageType.GAMEMESSAGE, "Your party failed to complete the challenge");
 		chat(ChatMessageType.GAMEMESSAGE, "Challenge complete: Path of Het");
 		verifyNoInteractions(f.sounds);
@@ -121,7 +125,7 @@ public class RaidLifecycleEventTest
 	}
 
 	@Test
-	public void failureMessageWaitsForLocationChangeBeforeExitSound()
+	public void abandonmentSuppressesExitSoundAndNextRaidCanLeaveNormally()
 	{
 		f.ticks(1);
 		chat(ChatMessageType.GAMEMESSAGE, "You abandon the raid and leave the Tombs of Amascut.");
@@ -130,7 +134,30 @@ public class RaidLifecycleEventTest
 		verifyNoMoreInteractions(f.sounds);
 		f.region(13454);
 		f.ticks(3);
+		verifyNoMoreInteractions(f.sounds);
+		f.region(14160);
+		f.ticks(1);
+		f.region(13454);
+		f.ticks(3);
 		verify(f.sounds).trigger(ToaEvent.RAID_LEAVE);
+		verifyNoMoreInteractions(f.sounds);
+	}
+
+	@Test
+	public void failureOrAbandonmentAfterExitTickCancelsPendingLeave()
+	{
+		for (String message : new String[]{"You failed to survive the Tombs of Amascut.",
+			"You abandon the raid and leave the Tombs of Amascut."})
+		{
+			f.region(14160);
+			f.ticks(1);
+			f.region(13454);
+			f.ticks(1);
+			verify(f.sounds, never()).trigger(ToaEvent.RAID_LEAVE);
+			chat(ChatMessageType.GAMEMESSAGE, message);
+			f.ticks(3);
+		}
+		verify(f.sounds, times(2)).trigger(ToaEvent.RAID_FAIL);
 		verifyNoMoreInteractions(f.sounds);
 	}
 
@@ -150,7 +177,7 @@ public class RaidLifecycleEventTest
 		verifyNoInteractions(f.sounds);
 		when(f.client.getTopLevelWorldView()).thenReturn(f.world);
 		when(f.world.isInstance()).thenReturn(false);
-		f.ticks(1);
+		f.ticks(2);
 		verify(f.sounds).trigger(ToaEvent.RAID_LEAVE);
 		verifyNoMoreInteractions(f.sounds);
 	}

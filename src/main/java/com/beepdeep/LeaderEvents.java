@@ -2,7 +2,6 @@ package com.beepdeep;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.runelite.api.ActorSpotAnim;
@@ -53,8 +52,7 @@ public class LeaderEvents
 	private static final int TOA_NEXUS_REGION = 14160;
 	private static final int TOA_WARDENS_REGION = 15184;
 	private static final int TOA_WARDENS_FINAL_REGION = 15696;
-	private static final Pattern RAID_ENTER_MESSAGE =
-		Pattern.compile("^You enter the Tombs of Amascut \\([^()]+\\)\\.\\.\\..*");
+	private static final String RAID_ENTER_MESSAGE = "You enter the Tombs of Amascut";
 	private static final String ROOM_FAIL_MESSAGE = "Your party failed to complete the challenge.";
 	private static final String RAID_FAIL_MESSAGE = "You failed to survive the Tombs of Amascut.";
 	private static final String RAID_ABANDON_MESSAGE = "You abandon the raid and leave the Tombs of Amascut.";
@@ -69,6 +67,8 @@ public class LeaderEvents
 
 	private int currentRegion = -1;
 	private boolean inRaid;
+	private boolean raidFailed;
+	private boolean raidLeavePending;
 	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
 	private int hetSealWaitingTick = -1;
 	private final ScabarasPuzzleTracker scabarasPuzzles = new ScabarasPuzzleTracker();
@@ -111,6 +111,8 @@ public class LeaderEvents
 	{
 		currentRegion = -1;
 		inRaid = false;
+		raidFailed = false;
+		raidLeavePending = false;
 		orbImpactCycles.clear();
 		hetSealWaitingTick = -1;
 		scabarasPuzzles.reset();
@@ -151,9 +153,19 @@ public class LeaderEvents
 			return;
 		}
 		boolean currentlyInRaid = isRaidRegion(region);
+		// Give exit chat one tick to cancel the normal leave sound on failure/abandonment.
+		if (raidLeavePending)
+		{
+			raidLeavePending = false;
+			soundManager.trigger(ToaEvent.RAID_LEAVE);
+		}
 		if (inRaid && !currentlyInRaid)
 		{
-			soundManager.trigger(ToaEvent.RAID_LEAVE);
+			raidLeavePending = !raidFailed;
+		}
+		else if (!inRaid && currentlyInRaid)
+		{
+			raidFailed = false;
 		}
 		inRaid = currentlyInRaid;
 		if (region != currentRegion)
@@ -519,7 +531,7 @@ public class LeaderEvents
 		String message = event.getMessage();
 		String plainMessage = Text.removeTags(message);
 		// These messages may arrive before entry or after the exit has loaded.
-		if (RAID_ENTER_MESSAGE.matcher(plainMessage).matches())
+		if (plainMessage.contains(RAID_ENTER_MESSAGE))
 		{
 			soundManager.trigger(ToaEvent.RAID_ENTER);
 		}
@@ -529,6 +541,8 @@ public class LeaderEvents
 		}
 		else if (plainMessage.equals(RAID_FAIL_MESSAGE) || plainMessage.equals(RAID_ABANDON_MESSAGE))
 		{
+			raidFailed = true;
+			raidLeavePending = false;
 			soundManager.trigger(ToaEvent.RAID_FAIL);
 		}
 
