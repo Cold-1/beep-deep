@@ -234,6 +234,11 @@ public class LeaderEvents
 			hetSealWaitingTick = -1;
 		}
 
+		if (region == TOA_WARDENS_REGION)
+		{
+			soundManager.trigger(ToaEvent.WARDENS_ENTER);
+		}
+
 		if (region == TOA_VAULT_REGION)
 		{
 			int varbitValue = client.getVarbitValue(VarbitID.TOA_VAULT_SARCOPHAGUS);

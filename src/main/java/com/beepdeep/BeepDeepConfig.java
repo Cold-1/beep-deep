@@ -2029,12 +2029,98 @@ public interface BeepDeepConfig extends Config
 		return 50;
 	}
 
+	// ===================== Wardens - Enter =====================
+
+	@ConfigSection(
+		name = "Wardens - Enter",
+		description = "Sounds played when you enter the Wardens room.",
+		position = 23,
+		closedByDefault = true
+	)
+	String wardensEnterSection = "wardensEnterSection";
+
+	@ConfigItem(keyName = "wardensEnterEnabled", name = "Enabled", description = "Play a sound for this event.", section = wardensEnterSection, position = 0)
+	default boolean wardensEnterEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(keyName = "wardensEnterSound1", name = "Sound 1", description = SOUND_DESC, section = wardensEnterSection, position = 1)
+	default String wardensEnterSound1()
+	{
+		return "2192";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "wardensEnterVolume1", name = "Volume 1", description = "Playback volume for sound 1.", section = wardensEnterSection, position = 2)
+	default int wardensEnterVolume1()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "wardensEnterSound2", name = "Sound 2", description = SOUND_DESC, section = wardensEnterSection, position = 3)
+	default String wardensEnterSound2()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "wardensEnterVolume2", name = "Volume 2", description = "Playback volume for sound 2.", section = wardensEnterSection, position = 4)
+	default int wardensEnterVolume2()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "wardensEnterSound3", name = "Sound 3", description = SOUND_DESC, section = wardensEnterSection, position = 5)
+	default String wardensEnterSound3()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "wardensEnterVolume3", name = "Volume 3", description = "Playback volume for sound 3.", section = wardensEnterSection, position = 6)
+	default int wardensEnterVolume3()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "wardensEnterSound4", name = "Sound 4", description = SOUND_DESC, section = wardensEnterSection, position = 7)
+	default String wardensEnterSound4()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "wardensEnterVolume4", name = "Volume 4", description = "Playback volume for sound 4.", section = wardensEnterSection, position = 8)
+	default int wardensEnterVolume4()
+	{
+		return 50;
+	}
+
+	@ConfigItem(keyName = "wardensEnterSound5", name = "Sound 5", description = SOUND_DESC, section = wardensEnterSection, position = 9)
+	default String wardensEnterSound5()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@Units(Units.PERCENT)
+	@ConfigItem(keyName = "wardensEnterVolume5", name = "Volume 5", description = "Playback volume for sound 5.", section = wardensEnterSection, position = 10)
+	default int wardensEnterVolume5()
+	{
+		return 50;
+	}
+
 	// ===================== Vault: Loot Room - No Rare Loot =====================
 
 	@ConfigSection(
 		name = "Vault - No Rare Loot",
 		description = "Sounds played when the ToA vault opens without rare loot.",
-		position = 23,
+		position = 24,
 		closedByDefault = true
 	)
 	String vaultNoRareLootSection = "vaultNoRareLootSection";
@@ -2120,7 +2206,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Vault - Rare Loot",
 		description = "Sounds played when the ToA vault opens with rare loot.",
-		position = 24,
+		position = 25,
 		closedByDefault = true
 	)
 	String vaultRareLootSection = "vaultRareLootSection";

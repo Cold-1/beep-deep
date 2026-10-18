@@ -25,6 +25,7 @@ every sound slot has its own volume (0–100%). **General → Master volume** ad
   - Any player taking damage from light or dark orbs in the Het puzzle room
   - Het seal not one-phased
   - Any player hit by an Unstable Orb in Akkha's arena
+- Enter the Wardens room
 - Vault opens with no rare loot
 - Vault opens with rare loot
 

@@ -40,6 +40,24 @@ public class RaidLifecycleEventTest
 	}
 
 	@Test
+	public void wardensEntryPlaysOncePerVisitAndNotOnFinalPhaseTransition()
+	{
+		f.ticks(1);
+		f.region(15184);
+		f.ticks(3);
+		verify(f.sounds).trigger(ToaEvent.WARDENS_ENTER);
+		f.region(15696);
+		f.ticks(3);
+		verifyNoMoreInteractions(f.sounds);
+		f.region(14160);
+		f.ticks(1);
+		f.region(15184);
+		f.ticks(1);
+		verify(f.sounds, times(2)).trigger(ToaEvent.WARDENS_ENTER);
+		verifyNoMoreInteractions(f.sounds);
+	}
+
+	@Test
 	public void raidLocationAloneDoesNotPlayEntry()
 	{
 		f.ticks(3);
