@@ -375,7 +375,7 @@ public interface BeepDeepConfig extends Config
 	@ConfigSection(
 		name = "Test configured sounds",
 		description = "Preview one configured sound at its slot and master volume.",
-		position = 25
+		position = Integer.MAX_VALUE
 	)
 	String soundTestSection = "soundTestSection";
 
