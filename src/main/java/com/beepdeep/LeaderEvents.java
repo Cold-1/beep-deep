@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ActorSpotAnim;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -38,6 +39,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.util.Text;
 
 @Singleton
+@Slf4j
 public class LeaderEvents
 {
 	private static final int CRONDIS_PUZZLE_REGION = 15698;
@@ -49,6 +51,7 @@ public class LeaderEvents
 	private static final int HET_PUZZLE_REGION = 14674;
 	private static final int AKKHA_REGION = 14676;
 	private static final int TOA_VAULT_REGION = 14672;
+	private static final int TOA_LOBBY_REGION = 13454;
 	private static final int TOA_NEXUS_REGION = 14160;
 	private static final int TOA_WARDENS_REGION = 15184;
 	private static final int TOA_WARDENS_FINAL_REGION = 15696;
@@ -68,7 +71,7 @@ public class LeaderEvents
 	private int currentRegion = -1;
 	private boolean inRaid;
 	private boolean raidFailed;
-	private boolean raidLeavePending;
+	private int raidExitOriginRegion = -1;
 	private final Map<Integer, Integer> orbImpactCycles = new HashMap<>();
 	private int hetSealWaitingTick = -1;
 	private final ScabarasPuzzleTracker scabarasPuzzles = new ScabarasPuzzleTracker();
@@ -112,7 +115,7 @@ public class LeaderEvents
 		currentRegion = -1;
 		inRaid = false;
 		raidFailed = false;
-		raidLeavePending = false;
+		raidExitOriginRegion = -1;
 		orbImpactCycles.clear();
 		hetSealWaitingTick = -1;
 		scabarasPuzzles.reset();
@@ -148,20 +151,32 @@ public class LeaderEvents
 		}
 
 		int region = regionOf(local);
-		if (region == -1 && !notInInstance())
+		if (region == -1)
 		{
 			return;
 		}
-		boolean currentlyInRaid = isRaidRegion(region);
-		// Give exit chat one tick to cancel the normal leave sound on failure/abandonment.
-		if (raidLeavePending)
+		boolean currentlyInRaid = !notInInstance() && isRaidRegion(region);
+		// Give exit chat one tick to supply the failure sound before inferring an exit.
+		if (raidExitOriginRegion != -1)
 		{
-			raidLeavePending = false;
-			soundManager.trigger(ToaEvent.RAID_LEAVE);
+			if (!currentlyInRaid)
+			{
+				// Resolve the destination now: the first exit snapshot can still be the lobby
+				// while a teleport to another region is loading.
+				ToaEvent exit = raidExitOriginRegion == TOA_VAULT_REGION && region == TOA_LOBBY_REGION
+					? ToaEvent.RAID_LEAVE : ToaEvent.RAID_FAIL;
+				log.debug("Beep Deep: raid exit from region {} to {}: {}", raidExitOriginRegion, region, exit);
+				raidFailed = exit == ToaEvent.RAID_FAIL;
+				soundManager.trigger(exit);
+			}
+			raidExitOriginRegion = -1;
 		}
 		if (inRaid && !currentlyInRaid)
 		{
-			raidLeavePending = !raidFailed;
+			if (!raidFailed)
+			{
+				raidExitOriginRegion = currentRegion;
+			}
 		}
 		else if (!inRaid && currentlyInRaid)
 		{
@@ -212,6 +227,7 @@ public class LeaderEvents
 	// Puzzle leave sounds only accompany a transition to that path's boss room.
 	private void onRegionChanged(int previous, int region)
 	{
+		log.debug("Beep Deep: region changed from {} to {} (instanced: {})", previous, region, !notInInstance());
 		ToaEvent leave = puzzleRoomEvent(previous, false);
 		if (leave != null && region == bossRegionForPuzzle(previous))
 		{
@@ -234,7 +250,8 @@ public class LeaderEvents
 			hetSealWaitingTick = -1;
 		}
 
-		if (region == TOA_WARDENS_REGION)
+		// Returning from the final arena after a wipe is not a new Wardens visit.
+		if (region == TOA_WARDENS_REGION && previous != TOA_WARDENS_FINAL_REGION)
 		{
 			soundManager.trigger(ToaEvent.WARDENS_ENTER);
 		}
@@ -546,9 +563,12 @@ public class LeaderEvents
 		}
 		else if (plainMessage.equals(RAID_FAIL_MESSAGE) || plainMessage.equals(RAID_ABANDON_MESSAGE))
 		{
+			if (!raidFailed)
+			{
+				soundManager.trigger(ToaEvent.RAID_FAIL);
+			}
 			raidFailed = true;
-			raidLeavePending = false;
-			soundManager.trigger(ToaEvent.RAID_FAIL);
+			raidExitOriginRegion = -1;
 		}
 
 		if (notInInstance())
@@ -587,11 +607,12 @@ public class LeaderEvents
 	private int regionOf(Player player)
 	{
 		LocalPoint location = player.getLocalLocation();
-		if (location == null || notInInstance())
+		if (location == null)
 		{
 			return -1;
 		}
-		WorldPoint worldPoint = WorldPoint.fromLocalInstance(client, location);
+		WorldPoint worldPoint = notInInstance() ? player.getWorldLocation()
+			: WorldPoint.fromLocalInstance(client, location);
 		return worldPoint == null ? -1 : worldPoint.getRegionID();
 	}
 

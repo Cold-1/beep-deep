@@ -58,6 +58,34 @@ public class RaidLifecycleEventTest
 	}
 
 	@Test
+	public void wardensWipeReturningFromFinalArenaDoesNotPlayEntry()
+	{
+		for (boolean chatBeforeTransition : new boolean[]{true, false})
+		{
+			f.region(14160);
+			f.ticks(1);
+			f.region(15184);
+			f.ticks(1);
+			f.region(15696);
+			f.ticks(1);
+			clearInvocations(f.sounds);
+			if (chatBeforeTransition)
+			{
+				chat(ChatMessageType.GAMEMESSAGE, "Your party failed to complete the challenge.");
+			}
+			f.region(15184);
+			f.ticks(1);
+			if (!chatBeforeTransition)
+			{
+				chat(ChatMessageType.GAMEMESSAGE, "Your party failed to complete the challenge.");
+			}
+			f.ticks(3);
+			verify(f.sounds).trigger(ToaEvent.ROOM_FAIL);
+			verifyNoMoreInteractions(f.sounds);
+		}
+	}
+
+	@Test
 	public void raidLocationAloneDoesNotPlayEntry()
 	{
 		f.ticks(3);
@@ -82,6 +110,7 @@ public class RaidLifecycleEventTest
 	{
 		when(f.world.isInstance()).thenReturn(false);
 		chat(ChatMessageType.GAMEMESSAGE, "<col=ff0000>You failed to survive the Tombs of Amascut.</col>");
+		f.leaderEvents.resetState();
 		chat(ChatMessageType.SPAM, "You abandon the raid and leave the Tombs of Amascut.");
 		verify(f.sounds, times(2)).trigger(ToaEvent.RAID_FAIL);
 		verifyNoMoreInteractions(f.sounds);
@@ -124,21 +153,103 @@ public class RaidLifecycleEventTest
 		verifyNoInteractions(f.sounds);
 		when(f.client.getGameState()).thenReturn(GameState.LOGGED_IN);
 		f.ticks(3);
+		verify(f.sounds).trigger(ToaEvent.RAID_FAIL);
+		verifyNoMoreInteractions(f.sounds);
+	}
+
+	@Test
+	public void vaultToLobbyPlaysLeaveOnceAndCanRepeatNextRaid()
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			when(f.world.isInstance()).thenReturn(true);
+			f.region(14672);
+			f.ticks(1);
+			clearInvocations(f.sounds);
+			f.outsideRegion(13454);
+			f.ticks(3);
+			verify(f.sounds).trigger(ToaEvent.RAID_LEAVE);
+			verifyNoMoreInteractions(f.sounds);
+		}
+	}
+
+	@Test
+	public void teleportThroughLobbySnapshotUsesFinalDestination()
+	{
+		f.region(14672);
+		f.ticks(1);
+		clearInvocations(f.sounds);
+		f.outsideRegion(13454);
+		f.ticks(1);
+		verifyNoInteractions(f.sounds);
+		f.outsideRegion(12345);
+		f.ticks(3);
+		verify(f.sounds).trigger(ToaEvent.RAID_FAIL);
+		verifyNoMoreInteractions(f.sounds);
+	}
+
+	@Test
+	public void pendingExitIsCancelledIfRaidLocationReturns()
+	{
+		f.region(14672);
+		f.ticks(1);
+		clearInvocations(f.sounds);
+		f.outsideRegion(13454);
+		f.ticks(1);
+		when(f.world.isInstance()).thenReturn(true);
+		f.region(14672);
+		f.ticks(3);
+		verify(f.sounds).trigger(ToaEvent.VAULT_NO_RARE_LOOT);
+		verifyNoMoreInteractions(f.sounds);
+	}
+
+	@Test
+	public void missingExitLocationWaitsUntilLobbyRegionIsKnown()
+	{
+		f.region(14672);
+		f.ticks(1);
+		clearInvocations(f.sounds);
+		when(f.world.isInstance()).thenReturn(false);
+		when(f.local.getWorldLocation()).thenReturn(null);
+		f.ticks(3);
+		verifyNoInteractions(f.sounds);
+		f.outsideRegion(13454);
+		f.ticks(3);
 		verify(f.sounds).trigger(ToaEvent.RAID_LEAVE);
 		verifyNoMoreInteractions(f.sounds);
 	}
 
 	@Test
-	public void leavingForLobbyOrAnotherInstancePlaysOnceAndCanRepeatNextRaid()
+	public void otherExitsAreAbandonmentIncludingTeleportFromVault()
 	{
-		for (int destination : new int[]{13454, 12345})
+		for (int source : new int[]{14160, 15184, 15696, 14672})
 		{
-			f.region(14160);
-			f.ticks(1);
-			f.region(destination);
-			f.ticks(3);
+			for (int destination : new int[]{13454, 12345})
+			{
+				if (source == 14672 && destination == 13454)
+				{
+					continue;
+				}
+				when(f.world.isInstance()).thenReturn(true);
+				f.region(source);
+				f.ticks(1);
+				clearInvocations(f.sounds);
+				f.outsideRegion(destination);
+				f.ticks(3);
+				verify(f.sounds).trigger(ToaEvent.RAID_FAIL);
+				chat(ChatMessageType.GAMEMESSAGE, "You abandon the raid and leave the Tombs of Amascut.");
+				verifyNoMoreInteractions(f.sounds);
+			}
 		}
-		verify(f.sounds, times(2)).trigger(ToaEvent.RAID_LEAVE);
+	}
+
+	@Test
+	public void teleportToAnotherInstanceIsAbandonment()
+	{
+		f.ticks(1);
+		f.region(12345);
+		f.ticks(3);
+		verify(f.sounds).trigger(ToaEvent.RAID_FAIL);
 		verifyNoMoreInteractions(f.sounds);
 	}
 
@@ -153,8 +264,9 @@ public class RaidLifecycleEventTest
 		f.region(13454);
 		f.ticks(3);
 		verifyNoMoreInteractions(f.sounds);
-		f.region(14160);
+		f.region(14672);
 		f.ticks(1);
+		clearInvocations(f.sounds);
 		f.region(13454);
 		f.ticks(3);
 		verify(f.sounds).trigger(ToaEvent.RAID_LEAVE);
@@ -167,16 +279,17 @@ public class RaidLifecycleEventTest
 		for (String message : new String[]{"You failed to survive the Tombs of Amascut.",
 			"You abandon the raid and leave the Tombs of Amascut."})
 		{
-			f.region(14160);
+			f.region(14672);
 			f.ticks(1);
+			clearInvocations(f.sounds);
 			f.region(13454);
 			f.ticks(1);
 			verify(f.sounds, never()).trigger(ToaEvent.RAID_LEAVE);
 			chat(ChatMessageType.GAMEMESSAGE, message);
 			f.ticks(3);
+			verify(f.sounds).trigger(ToaEvent.RAID_FAIL);
+			verifyNoMoreInteractions(f.sounds);
 		}
-		verify(f.sounds, times(2)).trigger(ToaEvent.RAID_FAIL);
-		verifyNoMoreInteractions(f.sounds);
 	}
 
 	@Test
@@ -196,7 +309,7 @@ public class RaidLifecycleEventTest
 		when(f.client.getTopLevelWorldView()).thenReturn(f.world);
 		when(f.world.isInstance()).thenReturn(false);
 		f.ticks(2);
-		verify(f.sounds).trigger(ToaEvent.RAID_LEAVE);
+		verify(f.sounds).trigger(ToaEvent.RAID_FAIL);
 		verifyNoMoreInteractions(f.sounds);
 	}
 

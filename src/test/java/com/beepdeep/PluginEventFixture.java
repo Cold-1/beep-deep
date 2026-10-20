@@ -10,6 +10,7 @@ import net.runelite.api.IndexedObjectSet;
 import net.runelite.api.Player;
 import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
 
 import net.runelite.client.party.PartyService;
@@ -73,6 +74,7 @@ final class PluginEventFixture
 		when(world.isInstance()).thenReturn(true);
 		LocalPoint location = LocalPoint.fromScene(1, 1, world);
 		when(local.getLocalLocation()).thenReturn(location);
+		when(local.getWorldLocation()).thenReturn(new WorldPoint(0, 0, 0));
 	}
 
 	void region(int region)
@@ -89,5 +91,11 @@ final class PluginEventFixture
 			plugin.onGameTick(new GameTick());
 			leaderEvents.onGameTick(new GameTick());
 		}
+	}
+
+	void outsideRegion(int region)
+	{
+		when(world.isInstance()).thenReturn(false);
+		when(local.getWorldLocation()).thenReturn(new WorldPoint((region >> 8) * 64, (region & 255) * 64, 0));
 	}
 }

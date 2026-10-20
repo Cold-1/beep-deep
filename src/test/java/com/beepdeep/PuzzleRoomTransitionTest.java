@@ -54,7 +54,7 @@ public class PuzzleRoomTransitionTest
 	}
 
 	@Test
-	public void teleportOutPlaysOnlyRaidLeave()
+	public void teleportOutPlaysOnlyRaidFail()
 	{
 		PluginEventFixture f = new PluginEventFixture();
 		f.region(region);
@@ -62,7 +62,7 @@ public class PuzzleRoomTransitionTest
 		clearInvocations(f.sounds);
 		when(f.world.isInstance()).thenReturn(false);
 		f.ticks(3);
-		verify(f.sounds).trigger(ToaEvent.RAID_LEAVE);
+		verify(f.sounds).trigger(ToaEvent.RAID_FAIL);
 		verifyNoMoreInteractions(f.sounds);
 	}
 

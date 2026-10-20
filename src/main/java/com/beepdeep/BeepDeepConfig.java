@@ -109,7 +109,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Raid - Leave",
-		description = "Sounds played when you actually exit the raid, including teleporting out.",
+		description = "Sounds played when you leave the completed raid from the vault to the lobby.",
 		position = 2,
 		closedByDefault = true
 	)
@@ -281,7 +281,7 @@ public interface BeepDeepConfig extends Config
 
 	@ConfigSection(
 		name = "Raid - Failed or Abandoned Raid",
-		description = "Sounds played when you fail to survive or abandon the raid.",
+		description = "Sounds played when you fail to survive or abandon the raid, including teleporting out.",
 		position = 4,
 		closedByDefault = true
 	)
